@@ -147,7 +147,7 @@ It is unclear exactly why, but the second action call seemed to be affecting the
 - **Solution**: 
    1) I consolidated the links *Browse Closet* and *Lookbook* into one large "megamenu" tab called *Collections*. This was done by going into Appearance > Menus,selecting the top primary menu, adding a custom link page called *Collections*, and then enabling the "megamenu" style 1 with 3 columns. One column for the *Lookbook* link and 2 columns for all the links within the *Browse Closet* tab (*All*, *Bottoms*, *Dresses*, *Outerwear*, and *Tops*). I have included an image of the link order and will list the rest of the settings.
 
-   ![Image](images/collections tab menu.png)
+   ![collections tab menu](images/collections tab menu.png)
 
     - *Get Inspired!*: col width = 300px, check "Don't link"
     - *Browse Our Collection*: col width = 600px, check "Don't link"
