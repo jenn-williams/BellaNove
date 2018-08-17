@@ -147,7 +147,7 @@ It is unclear exactly why, but the second action call seemed to be affecting the
 - **Solution**: 
    1) I consolidated the links *Browse Closet* and *Lookbook* into one large "megamenu" tab called *Collections*. This was done by going into Appearance > Menus,selecting the top primary menu, adding a custom link page called *Collections*, and then enabling the "megamenu" style 1 with 3 columns. One column for the *Lookbook* link and 2 columns for all the links within the *Browse Closet* tab (*All*, *Bottoms*, *Dresses*, *Outerwear*, and *Tops*). I have included an image of the link order and will list the rest of the settings.
 
-   ![Image](/collections tab menu.png)
+   ![Image](images/collections tab menu.png)
 
     - *Get Inspired!*: col width = 300px, check "Don't link"
     - *Browse Our Collection*: col width = 600px, check "Don't link"
@@ -200,7 +200,7 @@ It is unclear exactly why, but the second action call seemed to be affecting the
     2) Move the BellaNove logo to above the top menu
     - This is done within Appearance > Theme Options > Menu and Header (see image for details)
     
-	![Image](/logo alignment.png)
+	![Image](images/logo alignment.png)
 
     3) Remove the *Home* link from the menu
 
@@ -220,11 +220,11 @@ It is unclear exactly why, but the second action call seemed to be affecting the
 - **Problem**: There is no size guide on the website, but we want users to be aware of the more specific measurements (e.g. armpit circumfrence)
 - **Solution**: The size guide was added to all product pages via Appearance > General > Woocommerce settings (see image)
 
-![Image](/size guide.png)
+![Image](images/size guide.png)
 
 Additionally, a link to the size guide was added to the "Profile" page where the user inputs their measurements. This can be added within Users > Profile Fields (see image)
 
-![Image](/size guide 2.png)
+![Image](images/size guide 2.png)
 
 ### Buttons on Product Cards
 - **Problem**: There were 3 buttons on the bottom of the product cards: 1 for add to wishlist (heart), and 2 that linked to the product page.
@@ -248,11 +248,11 @@ Additionally, a link to the size guide was added to the "Profile" page where the
 - **Problem**: The current process for gifting a closet subscription is confusing and not very user friendly.
 - **Solution**: Given that the subscription purchase process and checkout process each rely on 2 different plugins, Woocommerce and Membership2, it is impossible to allow the user to purchase a subscription through the regular checkout. However, I figured out a way to make the process a bit smoother. First, I activated the Yith Gift Card plugin and then created the 3 different "gift card" products with the following settings: 
 
-![Image](/gift card product data.png)
+![Image](images/gift card product data.png)
 
 Next, I created a new "Gift" page to hold all of the gift card products. For each of the individual product pages, I added some shortcode to the product short description: 
 
-![Image](/gift card description.png)
+![Image](images/gift card description.png)
 
 This enables a button that says "Buy Now" and links to the same membership purchasing tract that it did before. Because there is no price associated with the gift card product, it shows some text "This product cannot be purchased" I also added some CSS to hide this text in the child theme custom.css:
 ```
@@ -340,11 +340,11 @@ h3.comment-reply-title {
 - **Problem**: We would like make a sitemap to help search engines crawl our site the way we would like.
 - **Solution**: First, I privated all of the pages that are not currently being used, so the sitemap will not link to them. Then I downloaded and enabled the "Google XML Sitemaps" plugin. All of the default settings can be kept except for the "Sitemap Content" section which should be enabled like this: 
 
-![Image](/xml sitemap config.png)
+![Image](images/xml sitemap config.png)
 
 I also excluded some of the pages:
 
-![Image](/excluded posts.png)
+![Image](images/excluded posts.png)
 
 These are the Account, Checkout, Legal, Disclaimer, Members, Profile, Thank you, Cart, Size Guide, Wishlist, Login,and Membership pages. (The post ID number can be seen by editing a given page and looking at the URL)
 
