@@ -1,8 +1,7 @@
 # Bella Nove
-Work from July 16 to August 12.
+Work from July 16 to August 22.
 
 ## Tasks
-***
 - [Code](README.md#code)
 - [Design/UX](README.md#design/ux)
 - [Plugins](README.md#plugins)
@@ -10,7 +9,6 @@ Work from July 16 to August 12.
 
 
 ## Code
-***
 ### The Gem Child Theme
 - **Problem**: The Gem Child Theme existed but changes made in these files did not show up on the website.
 - **Solution**: Deleted the old child theme files, recopied  The Gem theme files, and found that the `functions.php` file had a closing tag (`?>`) at the end of the file. Removing the closing tag solved the problem.
@@ -141,7 +139,6 @@ I tried removing `changeroles.php` and adding the first action and corresponding
 It is unclear exactly why, but the second action call seemed to be affecting the user's role after they make a payment. 
 
 ## Design/UX
-***
 ### Homepage Top Menu Consolidation/UX Improvements
 - **Problems**: 1. The large amount of links in the menu is potentially confusing to a user. 2. The BellaNove logo sometimes covers the *Browse Closet* tab. 3. There is a link for *Home* and the BellaNove logo links to *Home* as well.
 - **Solution**: 
@@ -261,16 +258,6 @@ This enables a button that says "Buy Now" and links to the same membership purch
 }
 ```
 
-### Quickview
-- **Problem**: We would like to have a quick view option for each product
-- **Solution**: In Appearance > Theme Options > General > Woocommerce settings, enable Quick View. Additionally, I added some CSS to the child theme custom.css to make it look nicer:
-```
-span.quick-view-button {
-	background-color: #fff;
-}
-```
-- **Issues**: Currently, the quick view shows up for all products on all pages but it only works for products in the "All" page. It appears to have something to do with only the "All" page (browse-closet) being the Woocommerce designated "Shop" page. I tried making the "All" page a parent page to the other shop pages and then I tried changing the permalinks for the other shop pages to be /browse-closet/page name, but neither attempt worked.
-
 ### uniform fonts / alignment / other added CSS
 - **Problem**: Some elements are misaligned; we want to use the same 2 fonts for everything; miscellaneous
 - **Solution**: Add CSS to child theme custom.css:
@@ -325,7 +312,6 @@ h3.comment-reply-title {
 ```
 
 ## Plugins
-***
 ### Product Reviews
 - **Problem**: We would like to enable users to write reviews and upload pictures for products
 - **Solution**: Enable the Woocommerce Photo Reviews plugin with the following settings:
@@ -346,8 +332,92 @@ I also excluded some of the pages:
 
 ![Image](images/excluded_posts.png)
 
-These are the Account, Checkout, Legal, Disclaimer, Members, Profile, Thank you, Cart, Size Guide, Wishlist, Login,and Membership pages. (The post ID number can be seen by editing a given page and looking at the URL)
+These are the Account, Checkout, Legal, Disclaimer, Members,Profile, Thank you, Cart, Size Guide, Wishlist, Login,and Membership pages. (The post ID number can be seen by editing a given page and looking at the URL)
 
+### Quickview
+- **Problem**: We would like to have a quick view option for each product
+- **Solution**: In Appearance > Theme Options > General > Woocommerce settings, I disabled Quick View. This quick view that is included with TheGem does not work correctly for all of our product pages (only worked for the "All" page which is the Woocommerce designated "Shop" page). Instead, I downloaded and enabled a plugin called "Quick View WooCommerce". I configured the following settings from the WordPress backend:
+
+![Image](images/qv_1.png)
+
+![Image](images/qv_2.png)
+
+![Image](images/qv_3.png)
+
+
+I also added some CSS to the child theme custom.css to make the quick view button and pop up look nicer (similar to the way TheGem quickview looked).
+
+Here is styling for the quick view button that appears when you hover over a product:
+```
+/* quick view button*/
+a.xoo-qv-button {
+	font-family: 'Montserrat', Arial, sans-serif;
+	line-height: 25px;
+	text-transform: uppercase;
+	top: 80% !important;
+	width: 100%;
+}
+```
+
+Here is styling for the product image and thumbnail images:
+```
+.xoo-qv-images .woocommerce-main-image img {
+	height: 100%;
+	width: 100%;
+	padding-left: 30px;
+	padding-top: 30px;
+}
+.xoo-qv-images .thumbnails {
+	padding-left: 30px;
+}
+.xoo-qv-images  .attachment-shop_thumbnail {
+	height: auto;
+	padding-right: 10px;
+	padding-top: 15px;
+}
+```
+
+Here is sizing CSS for the popup box itself:
+```
+div.xoo-qv-container {
+	height: 775px;
+	max-height: 775px;
+}
+```
+
+Here is styling for all of the buttons (including hiding the unnecessary "Browse Wishlist" buttons):
+```
+div.xoo-qv-summary .single_add_to_cart_button {
+	margin-top: 0px;
+}
+div.xoo-qv-summary table.variations td.label label {
+	line-height: 25px;
+}
+div.xoo-qv-summary table.variations {
+	margin-bottom: 0px;
+}
+.xoo-qv-plink {
+	background-color: rgb(185, 118, 167);
+	border-radius: 3px;
+	font-family: 'Montserrat', Arial, sans-serif;
+}
+div.yith-wcwl-wishlistexistsbrowse, div.yith-wcwl-wishlistaddedbrowse {
+	display: none;
+}
+div.yith-wcwl-add-to-wishlist {
+	display: inline;
+}
+div.yith-wcwl-add-button a.add_to_wishlist {
+	margin-top: 0px;
+}
+```
+
+Finally, here is CSS to hide the product metadata, which is also unnecessary for quickview:
+```
+div.xoo-qv-summary  div.product-meta {
+	display: none;
+}
+```
 
 ## Other
 
@@ -374,5 +444,3 @@ These are the Account, Checkout, Legal, Disclaimer, Members, Profile, Thank you,
 
 ### FB Pixel
 - The FB pixel still does not work correctly, we've tried a number of different approaches including creating a new pixel, adding additional microtags, deleting and reinstalling the Woocommerce for FB app, and deactivating plugins to see if there was interference there.
-
-***
