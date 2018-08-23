@@ -11,18 +11,39 @@ Work from July 16 to August 22.
 ## Code
 ### The Gem Child Theme
 - **Problem**: The Gem Child Theme existed but changes made in these files did not show up on the website.
-- **Solution**: Deleted the old child theme files, recopied  The Gem theme files, and found that the `functions.php` file had a closing tag (`?>`) at the end of the file. Removing the closing tag solved the problem.
+- **Solution**: Deleted the old child theme files, recopied the required files from TheGem theme, and found that the `functions.php` file had a closing tag (`?>`) at the end of the file. Removing the closing tag solved the problem. 
+
+Required files for a child theme are: `functions.php` and `style.css` that are placed within the child theme directory (a folder inside themes called `thegem-child-new`. The `style.css` file must have a snippet like this at the top of the file:
+```
+/*
+ Theme Name:   The Gem Child
+ Theme URI:    http://codex-themes.com/thegem/
+ Description:  The Gem Child Theme
+ Author:       Jennifer Williams
+ Template:     thegem
+ Version:      1.0.0
+ License:      GNU General Public License v2 or later
+ License URI:  http://www.gnu.org/licenses/gpl-2.0.html
+ Tags:         
+ Text Domain:  thegem-child
+*/
+```
+
+Within our child theme folder we also have a `header.php` file, `footer.php` file, a `Woocommerce` folder, and a `custom.css` file. All of the CSS that I have added is within `custom.css`. Any other additional `php` files would be placed in this folder as well.
+
+For more information about child theme set up see this link: [WP Child Themes](https://codex.wordpress.org/Child_Themes)
+
 
 ### Adding Google Fonts
 - **Problem**: One of our fonts, `Montserrat`, was not found by all browers.
-- **Solution**: Added a code snippet from Google Fonts to The Gem Child Theme header.php file inside the `<head>` tag (see code snippet)
+- **Solution**: Added a code snippet from Google Fonts to The Gem Child Theme `header.php` file inside the `<head>` tag (see code snippet)
 ```
 <link href="https://fonts.googleapis.com/css?family=Montserrat|Source+Sans+Pro" rel="stylesheet">  
 ```
 
 ### Ensure Child Theme CSS is Refreshed
 - **Problem**: Edits to the CSS in the child theme folder do not show up immediately.
-- **Solution**: Edit code in `functions.php` so that the CSS is refreshed immediately:
+- **Solution**: Add code in `functions.php` so that the CSS is refreshed immediately:
 ```
 function thegemchild_enqueue_styles() {
     
@@ -65,9 +86,9 @@ function iconic_email_order_items_args( $args ) {
 
 }
 ```
-See these links: [1](https://www.cloudways.com/blog/add-product-images-skus-to-woocommerce-order-emails/) [2](https://wordpress.stackexchange.com/questions/274960/woocommerce-3-1-add-product-image-to-order-confirmation-email-not-working)
+See these links for more info about the code snippets: [1](https://www.cloudways.com/blog/add-product-images-skus-to-woocommerce-order-emails/) [2](https://wordpress.stackexchange.com/questions/274960/woocommerce-3-1-add-product-image-to-order-confirmation-email-not-working)
 
-### Add to Wishlist from within Cart
+### Add to Wishlist Button within Cart page
 - **Problem**: We would like to add an "Add to Wishlist" button for each product in a user's cart.
 - **Solution**: Add code to `functions.php`:
 ```
@@ -136,7 +157,48 @@ function assign_default_role( $user_id = 0 ){
 }
 ```
 I tried removing `changeroles.php` and adding the first action and corresponding function to `functions.php` in the child folder and the problem was resolved.
-It is unclear exactly why, but the second action call seemed to be affecting the user's role after they make a payment. 
+It is unclear exactly why, but the second action call seemed to be affecting the user's role after they make a payment. So the following snippet of code is no longer included in the codebase:
+```
+add_action( 'ms_model_event', 'my_event_handler', 10, 2 );
+function my_event_handler( $event, $data ) {
+	$member = false;
+	$subscription = false;
+	$membership = false;
+	
+	switch ( $event->type ) {
+		case MS_Model_Event::TYPE_MS_CANCELED:
+			// A membership was cancelled - either by Admin or by the member.
+			// No more payments will be made but member has access until current period ends.
+			$subscription = $data;
+			$membership = $data->get_membership();
+			$member = $subscription->get_member();
+			assign_default_role( $member->id );
+			break;
+		case MS_Model_Event::TYPE_MS_DEACTIVATED:
+			// A membership was permanently deactivated. Member has no access anymore.
+			$subscription = $data;
+			$membership = $data->get_membership();
+			$member = $subscription->get_member();
+			assign_default_role( $member->id );
+			break;
+	}
+	
+}
+function assign_default_role( $user_id = 0 ){
+	$user = new WP_User( $user_id );
+	$user->set_role( 'subscriber' );
+}
+```
+
+### Make all product pages have 3 items per row
+- **Problems**: The "All" product page (Woocommerce designated "Shop" page) has 4 items per row whereas all of the other product pages have 3 items per row. The smaller image size for the "All" page interferes with the quickview button placement.
+- **Solution**: Add the following code to the child theme `functions.php` file:
+```
+function loop_columns() {
+    return 3; // 3 products per row
+}
+add_filter('loop_shop_columns', 'loop_columns', 999);
+```
 
 ## Design/UX
 ### Homepage Top Menu Consolidation/UX Improvements
@@ -157,7 +219,7 @@ It is unclear exactly why, but the second action call seemed to be affecting the
     -(space x2): this was added to keep the links inline under the correct label; col width 600px, click "Don't link", "Don't show", and "This item should start a new row"
     - *Tops*: col width 300px, click "Make Clickable on Mobile"
 
-        Design-wise, I wanted to make the labels look different than the links, so I added in some css to achieve this. There is also some css to fix alignment of the *Tops* link. (see code snippet below from custom.css in The Gem Child Theme)
+        Design-wise, I wanted to make the labels look different than the links, so I added in some css to achieve this. There is also some css to fix alignment of the *Tops* link. (see code snippet below from `custom.css` in The Gem Child Theme)
         ```
         #primary-menu.no-responsive > li.megamenu-enable > ul > li span.megamenu-column-header a.mega-no-link {
 	    border-bottom: 1px solid #dfe5e8;
@@ -183,7 +245,7 @@ It is unclear exactly why, but the second action call seemed to be affecting the
         }
         ```
 
-        With this change there are also additional settings for mobile, which include hiding the labels *Get Inspired!* and *Browse Our Collection*. There is also some css to fix alignment of the *Tops* link. (see code snippet below from custom.css in The Gem Child Theme)
+        With this change there are also additional settings for mobile, which include hiding the labels *Get Inspired!* and *Browse Our Collection*. There is also some css to fix alignment of the *Tops* link. (see code snippet below from `custom.css` in The Gem Child Theme)
         ```
         @media only screen and (max-width: 980px) {
 	    .mobile-menu-layout-default .primary-navigation.responsive .dl-menu.dl-subview li.dl-subviewopen > .dl-submenu > li#menu-item-28906, .mobile-menu-layout-default .primary-navigation.responsive .dl-menu.dl-subview li.dl-subviewopen > .dl-submenu > li#menu-item-28905, .mobile-menu-layout-default .primary-navigation.responsive .dl-menu.dl-subview li.dl-subviewopen > .dl-submenu > li#menu-item-28916, .mobile-menu-layout-default .primary-navigation.responsive .dl-menu.dl-subview li.dl-subviewopen > .dl-submenu > li#menu-item-28917 {
@@ -203,7 +265,7 @@ It is unclear exactly why, but the second action call seemed to be affecting the
 
 ### Consolidating Dashboard and Edit Account into a Single Page
 - **Problem**: Woocommerce and Membership2 both have account pages with important information on them but it is confusing for the user to have these as 2 separate pages.
-- **Solution**: Consolidate the account pages by adding shortcode for both the Woocommerce account `[woocommerce_my_account order_count="15"]` and the Membership2 account `[ms-membership-account]` on a single page (My Account) and ensure this page is set to Account/My Account page for both Woocommerce and Membership2. I also added additional CSS in the child theme custom.css:
+- **Solution**: Consolidate the account pages by adding shortcode for both the Woocommerce account `[woocommerce_my_account order_count="15"]` and the Membership2 account `[ms-membership-account]` on a single page (My Account) and ensure this page is set to Account/My Account page for both Woocommerce and Membership2. I also added additional CSS in the child theme `custom.css`:
 
 ### Adding a Footer Menu
 - **Problem**: We have pages that are important to link to on every page (e.g. Contact), but should not be included on the top primary menu.
@@ -225,7 +287,7 @@ Additionally, a link to the size guide was added to the "Profile" page where the
 
 ### Buttons on Product Cards
 - **Problem**: There were 3 buttons on the bottom of the product cards: 1 for add to wishlist (heart), and 2 that linked to the product page.
-- **Solution**: Remove all but the heart button using the following CSS in custom.css in the child theme folder
+- **Solution**: Remove all but the heart button using the following CSS in `custom.css` in the child theme folder
 ```
 .products .product-bottom .bottom-product-link, .products .product-bottom .add_to_cart_button {
 	display: none;
@@ -233,7 +295,7 @@ Additionally, a link to the size guide was added to the "Profile" page where the
 ```
 ### Mini-Cart Scroll
 - **Problem**: When the cart has a lot of items, the "checkout" and "view cart" button are no longer visible and users cannot scroll down the list.
-- **Solution**: Enable scrolling by adding this CSS to custom.css in the child theme folder.
+- **Solution**: Enable scrolling by adding this CSS to `custom.css` in the child theme folder.
 ```
 #primary-menu.no-responsive > li.menu-item-cart .widget_shopping_cart_content ul.cart_list {
 	max-height: 500px;
@@ -251,16 +313,23 @@ Next, I created a new "Gift" page to hold all of the gift card products. For eac
 
 ![Image](images/gift_card_description.png)
 
-This enables a button that says "Buy Now" and links to the same membership purchasing tract that it did before. Because there is no price associated with the gift card product, it shows some text "This product cannot be purchased" I also added some CSS to hide this text in the child theme custom.css:
+This enables a button that says "Buy Now" and links to the same membership purchasing tract that it did before. Because there is no price associated with the gift card product, it shows some text "This product cannot be purchased" I also added some CSS to hide this text in the child theme `custom.css`:
 ```
 .gift-cards_form p {
 	visibility: hidden;
 }
 ```
+Screenshot of gift page:
+
+![Image](images/gift_page.png)
+
+Screenshot of gift card product page:
+
+![Image](images/gift_product_page.png)
 
 ### uniform fonts / alignment / other added CSS
 - **Problem**: Some elements are misaligned; we want to use the same 2 fonts for everything; miscellaneous
-- **Solution**: Add CSS to child theme custom.css:
+- **Solution**: Add CSS to child theme `custom.css`:
 ```
 /* main page titles */
 .page-title-title h1 {
@@ -324,15 +393,22 @@ h3.comment-reply-title {
 
 ### Sitemap/SEO
 - **Problem**: We would like make a sitemap to help search engines crawl our site the way we would like.
-- **Solution**: First, I privated all of the pages that are not currently being used, so the sitemap will not link to them. Then I downloaded and enabled the "Google XML Sitemaps" plugin. All of the default settings can be kept except for the "Sitemap Content" section which should be enabled like this: 
+- **Solution**: First, I privated all of the pages that are not currently being used, so the sitemap will not link to them. Then I downloaded and enabled the "Google XML Sitemaps" plugin. Settings for this plugin are found within Settings > XML-Sitemap. All of the default settings can be kept except for the "Sitemap Content" section which should be enabled like this: 
 
 ![Image](images/xml_sitemap_config.png)
 
-I also excluded some of the pages:
+I also excluded some of the pages by their post IDs. These are the Account, Checkout, Legal, Disclaimer, Members,Profile, Thank you, Cart, Size Guide, Wishlist, Login,and Membership pages:
 
 ![Image](images/excluded_posts.png)
 
-These are the Account, Checkout, Legal, Disclaimer, Members,Profile, Thank you, Cart, Size Guide, Wishlist, Login,and Membership pages. (The post ID number can be seen by editing a given page and looking at the URL)
+The post ID number can be seen by editing a given page and looking at the URL (post= ___):
+
+![Image](images/post_id.png)
+
+Additionally, any time that these settings are updated you need to resend the updated sitemap to search engines. Via this link at the top of the settings page:
+
+![Image](images/xml_send_sitemap.png)
+
 
 ### Quickview
 - **Problem**: We would like to have a quick view option for each product
@@ -345,7 +421,7 @@ These are the Account, Checkout, Legal, Disclaimer, Members,Profile, Thank you, 
 ![Image](images/qv_3.png)
 
 
-I also added some CSS to the child theme custom.css to make the quick view button and pop up look nicer (similar to the way TheGem quickview looked).
+I also added some CSS to the child theme `custom.css` to make the quick view button and pop up look nicer (similar to the way TheGem quickview looked).
 
 Here is styling for the quick view button that appears when you hover over a product:
 ```
@@ -417,7 +493,19 @@ Finally, here is CSS to hide the product metadata, which is also unnecessary for
 div.xoo-qv-summary  div.product-meta {
 	display: none;
 }
+
 ```
+
+Quickview Before:
+
+![Image](images/qv_before_1.png)
+
+![Image](images/qv_before_2.png)
+
+Quickview After:
+
+![Image](images/qv_after.png)
+
 
 ## Other
 
