@@ -1,11 +1,37 @@
 # Bella Nove
 Work from July 16 to August 22.
 
-## Tasks
+## Contents
 - [Code](README.md#code)
+   - [The Gem Child Theme](README.md#The-Gem-Child-Theme)
+   - [Google Fonts](README.md#Google-Fonts)
+   - [Refresh CSS](README.md#Refresh-CSS)
+   - [ReferralCandy Code](README.md#ReferralCandy-Code)
+   - [Add Product Images to Confirmation Email](README.md#Add-Product-Images-to-Confirmation-Email)
+   - ["Add to Wishlist" within Cart Page](README.md#"Add-to-Wishlist"-within-Cart-Page)
+   - [User Roles Issue](README.md#User-Roles-Issue)
+   - [3 Items per Row on "All" Page](README.md#3-Items-per-Row-on-"All"-Page)
 - [Design/UX](README.md#design/ux)
+   - [Top Menu Consolidation/UX Improvements](README.md#Top-Menu-Consolidation/UX-Improvements)
+   - [Consolidating Dashboard and Edit Account Pages](README.md#Consolidating-Dashboard-and-Edit-Account-Pages)
+   - [Add a Footer Menu](README.md#Add-a-Footer-Menu)
+   - [Format Contact and Gift Form Pages](README.md#Format-Contact-and-Gift-Form-Pages)
+   - [Add Size Guide](README.md#Add-Size-Guide)
+   - [Remove Buttons on Product Cards](README.md#Remove-Buttons-on-Product-Cards)
+   - [Mini-Cart Scroll](README.md#Mini-Cart-Scroll)
+   - [Gifting UX](README.md#Gifting-UX)
+   - ["Registration" Page](README.md#"Registration"-Page)
+   - [Uniform Fonts / Alignment / Other Added CSS](README.md#Uniform-Fonts-/-Alignment-/-Other-Added-CSS)
 - [Plugins](README.md#plugins)
+   - [Product Reviews](README.md#Product-Reviews)
+   - [Sitemap/SEO](README.md#Sitemap/SEO)
+   - [Quickview](README.md#Quickview)
 - [Other](README.md#other)
+   - [Staging Site](README.md#Staging-Site)
+   - [Databases](README.md#Databases)
+   - [Cloudflare](README.md#Cloudflare)
+   - [Site Optimization](README.md#Site-Optimization)
+   - [FB Pixel](README.md#FB-Pixel)
 
 
 ## Code
@@ -34,14 +60,14 @@ Within our child theme folder we also have a `header.php` file, `footer.php` fil
 For more information about child theme set up see this link: [WP Child Themes](https://codex.wordpress.org/Child_Themes)
 
 
-### Adding Google Fonts
+### Google Fonts
 - **Problem**: One of our fonts, `Montserrat`, was not found by all browers.
 - **Solution**: Added a code snippet from Google Fonts to The Gem Child Theme `header.php` file inside the `<head>` tag (see code snippet)
 ```
 <link href="https://fonts.googleapis.com/css?family=Montserrat|Source+Sans+Pro" rel="stylesheet">  
 ```
 
-### Ensure Child Theme CSS is Refreshed
+### Refresh CSS
 - **Problem**: Edits to the CSS in the child theme folder do not show up immediately.
 - **Solution**: Add code in `functions.php` so that the CSS is refreshed immediately:
 ```
@@ -60,7 +86,7 @@ add_action('wp_enqueue_scripts', 'thegemchild_enqueue_styles',1000);
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//portal.referralcandy.com/assets/widgets/refcandy-poprocks.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","refcandy-poprocks-js");</script>
 ```
 
-### Adding Product Images to Confirmation Email
+### Add Product Images to Confirmation Email
 - **Problem**: We would like product images to be included in the confimation email sent after a user makes an order.
 - **Solution**: I made a copy of the Woocommerce template file `email-order-details.php`, and added it to the child theme folder (Woocommerce > Templates > Emails > Plain), then configured the following settings:
 ```
@@ -88,7 +114,7 @@ function iconic_email_order_items_args( $args ) {
 ```
 See these links for more info about the code snippets: [1](https://www.cloudways.com/blog/add-product-images-skus-to-woocommerce-order-emails/) [2](https://wordpress.stackexchange.com/questions/274960/woocommerce-3-1-add-product-image-to-order-confirmation-email-not-working)
 
-### Add to Wishlist Button within Cart page
+### "Add to Wishlist" within Cart Page
 - **Problem**: We would like to add an "Add to Wishlist" button for each product in a user's cart.
 - **Solution**: Add code to `functions.php`:
 ```
@@ -103,7 +129,7 @@ if(!function_exists('yith_woocommerce_add_wishlist_button_name')) {
 }
 ```
 
-### User roles issue
+### User Roles Issue
 - **Problem**: When a user signs up for membership and makes the payment, their role is "Subscriber" instead of "Starter Closet", "Enhanced Closet", and "Ultimate Closet" and this affects the min/max cart rule.
 - **Solution**: This code was previously in the file `changeroles.php` in the `mu-plugins` folder within `wp-content`:
 ```
@@ -190,7 +216,7 @@ function assign_default_role( $user_id = 0 ){
 }
 ```
 
-### Make all product pages have 3 items per row
+### 3 Items per Row on "All" Page
 - **Problems**: The "All" product page (Woocommerce designated "Shop" page) has 4 items per row whereas all of the other product pages have 3 items per row. The smaller image size for the "All" page interferes with the quickview button placement.
 - **Solution**: Add the following code to the child theme `functions.php` file:
 ```
@@ -201,7 +227,7 @@ add_filter('loop_shop_columns', 'loop_columns', 999);
 ```
 
 ## Design/UX
-### Homepage Top Menu Consolidation/UX Improvements
+### Top Menu Consolidation/UX Improvements
 - **Problems**: 1. The large amount of links in the menu is potentially confusing to a user. 2. The BellaNove logo sometimes covers the *Browse Closet* tab. 3. There is a link for *Home* and the BellaNove logo links to *Home* as well.
 - **Solution**: 
    1) I consolidated the links *Browse Closet* and *Lookbook* into one large "megamenu" tab called *Collections*. This was done by going into Appearance > Menus,selecting the top primary menu, adding a custom link page called *Collections*, and then enabling the "megamenu" style 1 with 3 columns. One column for the *Lookbook* link and 2 columns for all the links within the *Browse Closet* tab (*All*, *Bottoms*, *Dresses*, *Outerwear*, and *Tops*). I have included an image of the link order and will list the rest of the settings.
@@ -261,21 +287,19 @@ add_filter('loop_shop_columns', 'loop_columns', 999);
     
 	![Image](images/logo_alignment.png)
 
-    3) Remove the *Home* link from the menu
-
-### Consolidating Dashboard and Edit Account into a Single Page
+### Consolidating Dashboard and Edit Account Pages
 - **Problem**: Woocommerce and Membership2 both have account pages with important information on them but it is confusing for the user to have these as 2 separate pages.
-- **Solution**: Consolidate the account pages by adding shortcode for both the Woocommerce account `[woocommerce_my_account order_count="15"]` and the Membership2 account `[ms-membership-account]` on a single page (My Account) and ensure this page is set to Account/My Account page for both Woocommerce and Membership2. I also added additional CSS in the child theme `custom.css`:
+- **Solution**: Consolidate the account pages by adding shortcode for both the Woocommerce account `[woocommerce_my_account order_count="15"]` and the Membership2 account `[ms-membership-account]` on a single page (My Account) and ensure this page is set to Account/My Account page for both Woocommerce and Membership2. (It is the link *Dashboard* under the *Account* tab in the main menu. I also added additional CSS in the child theme `custom.css`:
 
-### Adding a Footer Menu
+### Add a Footer Menu
 - **Problem**: We have pages that are important to link to on every page (e.g. Contact), but should not be included on the top primary menu.
 - **Solution**: Add a footer menu within Appearance > Menus
 
-### Formatting of Contact and Gift Form pages
+### Format Contact and Gift Form Pages
 - **Problem**: These form pages were all left aligned but it makes more sense to have them centered.
 - **Solution**: Within WPBakery Page Builder, I changed the style to 3 column and added a 15% left padding on the column
 
-### Adding Size Guide
+### Add Size Guide
 - **Problem**: There is no size guide on the website, but we want users to be aware of the more specific measurements (e.g. armpit circumfrence)
 - **Solution**: The size guide was added to all product pages via Appearance > General > Woocommerce settings (see image)
 
@@ -285,7 +309,7 @@ Additionally, a link to the size guide was added to the "Profile" page where the
 
 ![Image](images/size_guide_2.png)
 
-### Buttons on Product Cards
+### Remove Buttons on Product Cards
 - **Problem**: There were 3 buttons on the bottom of the product cards: 1 for add to wishlist (heart), and 2 that linked to the product page.
 - **Solution**: Remove all but the heart button using the following CSS in `custom.css` in the child theme folder
 ```
@@ -303,7 +327,7 @@ Additionally, a link to the size guide was added to the "Profile" page where the
 }
 ```
 
-### Gifting
+### Gifting UX
 - **Problem**: The current process for gifting a closet subscription is confusing and not very user friendly.
 - **Solution**: Given that the subscription purchase process and checkout process each rely on 2 different plugins, Woocommerce and Membership2, it is impossible to allow the user to purchase a subscription through the regular checkout. However, I figured out a way to make the process a bit smoother. First, I activated the Yith Gift Card plugin and then created the 3 different "gift card" products with the following settings: 
 
@@ -327,8 +351,54 @@ Screenshot of gift card product page:
 
 ![Image](images/gift_product_page.png)
 
-### uniform fonts / alignment / other added CSS
-- **Problem**: Some elements are misaligned; we want to use the same 2 fonts for everything; miscellaneous
+### "Registration" Page
+- **Problem**: The Membership2 defined "Registration" page does not work the way we want it to. Specifically, we want to make sure users have the option to cancel their membership here. This page is where users are taken when they click "Change" in their dashboard page, like below:
+
+![Image](images/change_membership.png)
+
+- **Solution**: I created a new page "Registration" that contains the shortcode: `[ms-membership-signup]`, then edited membership descriptions within Membership2 > Memberships and then clicking edit for each membership. I added the following CSS in the child theme `custom.css` file to make the page look a bit nicer:
+```
+.ms-top-bar h4 span.ms-title {
+	font-family: 'Montserrat', Arial, sans-serif;
+}
+
+.ms-signup .ms-top-bar h4 {
+	border-bottom: 1px solid #ddd;
+}
+
+.ms-signup .ms-top-bar, .ms-signup .ms-bottom-bar{
+	background: none;
+}
+
+.ms-signup {
+	border: none;
+}
+
+.ms-membership-form-wrapper legend {
+	font-size: 2em;
+	padding-bottom: 10px;
+}
+
+.ms-membership-form-wrapper .ms-signup-button {
+	float: none;
+}
+
+.ms-membership-details-wrapper {
+	padding-bottom: 40px;
+}
+```
+Before:
+
+![Image](images/reg_before.png)
+
+After:
+
+![Image](images/reg_after.png)
+
+Further editing to make this page look even nicer would require editing the template files, because all that is displayed on this page is just a shortcode.
+
+### Uniform Fonts / Alignment / Other Added CSS
+- **Problem**: Some elements are misaligned, including the main page titles; we want to use the same 2 fonts for everything; miscellaneous
 - **Solution**: Add CSS to child theme `custom.css`:
 ```
 /* main page titles */
@@ -390,6 +460,7 @@ h3.comment-reply-title {
    - Filters: disable
    - Coupons: disable
    - Review Reminders: disable
+- **Issue**: The only issue with this plugin is that user's cannot write reviews while logged in; the entire "Write a Review" section only appears on a product page when user is not logged in.
 
 ### Sitemap/SEO
 - **Problem**: We would like make a sitemap to help search engines crawl our site the way we would like.
