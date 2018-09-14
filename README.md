@@ -3,7 +3,7 @@ Work from July 16 to September 12.
 
 ## Contents
 - [Code](#code)
-   - [The Gem Child Theme](##The-Gem-Child-Theme)
+   - [The Gem Child Theme](#the-gem-child-theme)
    - [Google Fonts](#Google-Fonts)
    - [Refresh CSS](#Refresh-CSS)
    - [ReferralCandy Code](#ReferralCandy-Code)
