@@ -634,11 +634,11 @@ Quickview After:
 - To find a work around for this requirement, we came up with the idea of giving each product the price it would be to rent it individually for the month with the Starter Closet membership (i.e. $129/5 ~ $26). 
 - In order to keep the price as $0 on our website, the product's regular price is set to $26 and the sale price is set to $0. This ensures that customers renting the product are not charged the $26. See below for screenshots detailing the steps to follow when adding a new product or if a current product needs to be updated:
 ![Image](images/sale1.png)
-![Image](images/sale2.png) Note that a sale start date must be specified for the sale feature it to work, this is done by clicking "Schedule". An end date is not needed. Additionally, this process only needs to be done for ONE of the product variations (the size will not show up on FB Shop)
-- Once these changes have been saved and the product updated, it will be visible on our FB Shop and available to be tagged on Instagram. The product description can be updated on the FB shop by clicking "Edit Product" then editing the description. See screenshots below:
+![Image](images/sale2.png) Note that a sale start date must be specified for the sale feature to work, this is done by clicking "Schedule". An end date is not needed. Additionally, this process only needs to be done for ONE of the product variations (the size will not show up on FB Shop)
+- Once these changes have been saved and the product updated, it will be visible on our FB Shop and available to be tagged on Instagram. The product description can be updated from the FB shop Catalog by clicking "Edit Product" then editing the description. See screenshots below:
 ![Image](images/fbshop1.png)
 ![Image](images/fbshop2.png)
-- Lastly, I added the following CSS to the `custom.css` file to hide all of the "sale" icons that appear on the website when the sale feature is used:
+- Lastly, I added the following CSS to the `custom.css` file to hide all of the "sale" icons that appear on the website (on main product category pages, in quickview, and in the mini cart) when the sale feature is used:
 ```
 div.product-labels {
 	display: none;
