@@ -1,37 +1,38 @@
 # Bella Nove
-Work from July 16 to August 22.
+Work from July 16 to September 12.
 
 ## Contents
-- [Code](README.md#code)
-   - [The Gem Child Theme](README.md#The-Gem-Child-Theme)
-   - [Google Fonts](README.md#Google-Fonts)
-   - [Refresh CSS](README.md#Refresh-CSS)
-   - [ReferralCandy Code](README.md#ReferralCandy-Code)
-   - [Add Product Images to Confirmation Email](README.md#Add-Product-Images-to-Confirmation-Email)
-   - ["Add to Wishlist" within Cart Page](README.md#"Add-to-Wishlist"-within-Cart-Page)
-   - [User Roles Issue](README.md#User-Roles-Issue)
-   - [3 Items per Row on "All" Page](README.md#3-Items-per-Row-on-"All"-Page)
-- [Design/UX](README.md#design/ux)
-   - [Top Menu Consolidation/UX Improvements](README.md#Top-Menu-Consolidation/UX-Improvements)
-   - [Consolidating Dashboard and Edit Account Pages](README.md#Consolidating-Dashboard-and-Edit-Account-Pages)
-   - [Add a Footer Menu](README.md#Add-a-Footer-Menu)
-   - [Format Contact and Gift Form Pages](README.md#Format-Contact-and-Gift-Form-Pages)
-   - [Add Size Guide](README.md#Add-Size-Guide)
-   - [Remove Buttons on Product Cards](README.md#Remove-Buttons-on-Product-Cards)
-   - [Mini-Cart Scroll](README.md#Mini-Cart-Scroll)
-   - [Gifting UX](README.md#Gifting-UX)
-   - ["Registration" Page](README.md#"Registration"-Page)
-   - [Uniform Fonts / Alignment / Other Added CSS](README.md#Uniform-Fonts-/-Alignment-/-Other-Added-CSS)
-- [Plugins](README.md#plugins)
-   - [Product Reviews](README.md#Product-Reviews)
-   - [Sitemap/SEO](README.md#Sitemap/SEO)
-   - [Quickview](README.md#Quickview)
-- [Other](README.md#other)
-   - [Staging Site](README.md#Staging-Site)
-   - [Databases](README.md#Databases)
-   - [Cloudflare](README.md#Cloudflare)
-   - [Site Optimization](README.md#Site-Optimization)
-   - [FB Pixel](README.md#FB-Pixel)
+- [Code](#code)
+   - [The Gem Child Theme](#The-Gem-Child-Theme)
+   - [Google Fonts](#Google-Fonts)
+   - [Refresh CSS](#Refresh-CSS)
+   - [ReferralCandy Code](#ReferralCandy-Code)
+   - [Add Product Images to Confirmation Email](#Add-Product-Images-to-Confirmation-Email)
+   - ["Add to Wishlist" within Cart Page](#"Add-to-Wishlist"-within-Cart-Page)
+   - [User Roles Issue](R#User-Roles-Issue)
+   - [3 Items per Row on "All" Page](3-Items-per-Row-on-"All"-Page)
+- [Design/UX](#design/ux)
+   - [Top Menu Consolidation/UX Improvements](#Top-Menu-Consolidation/UX-Improvements)
+   - [Consolidating Dashboard and Edit Account Pages](#Consolidating-Dashboard-and-Edit-Account-Pages)
+   - [Add a Footer Menu](#Add-a-Footer-Menu)
+   - [Format Contact and Gift Form Pages](#Format-Contact-and-Gift-Form-Pages)
+   - [Add Size Guide](#Add-Size-Guide)
+   - [Remove Buttons on Product Cards](#Remove-Buttons-on-Product-Cards)
+   - [Mini-Cart Scroll](#Mini-Cart-Scroll)
+   - [Gifting UX](#Gifting-UX)
+   - ["Registration" Page](#"Registration"-Page)
+   - [Uniform Fonts / Alignment / Other Added CSS](#Uniform-Fonts-/-Alignment-/-Other-Added-CSS)
+- [Plugins](#plugins)
+   - [Product Reviews](#Product-Reviews)
+   - [Sitemap/SEO](#Sitemap/SEO)
+   - [Quickview](#Quickview)
+   - [Add Login Button to Menu](Add-Login-Button-to-Menu)
+- [Other](#other)
+   - [Staging Site](#Staging-Site)
+   - [Databases](#Databases)
+   - [Cloudflare](#Cloudflare)
+   - [Site Optimization](#Site-Optimization)
+   - [FB Shop](#FB-Shop)
 
 
 ## Code
@@ -547,6 +548,7 @@ div.xoo-qv-summary table.variations {
 	background-color: rgb(185, 118, 167);
 	border-radius: 3px;
 	font-family: 'Montserrat', Arial, sans-serif;
+	text-transform: uppercase;
 }
 div.yith-wcwl-wishlistexistsbrowse, div.yith-wcwl-wishlistaddedbrowse {
 	display: none;
@@ -577,6 +579,25 @@ Quickview After:
 
 ![Image](images/qv_after.png)
 
+### Add Login Button to Menu
+- **Problem**: We would like to add a Login/Logout button to the main menu of the site
+- **Solution**: To create a dynamic login/logout button in the menu:
+   - Download the plugin `Login or Logout Menu Item`
+   - Create a new "Login" page with a redirect to the "Account" page:
+   ![Image](images/new_login_page.png)
+   - On the plugin page, configure the following settings:
+   ![Image](images/loginplugin.png)
+   - The previous "Login" page was renamed to "Checkout Login" because it redirects to the checkout page
+   - To add the link to the menu, go to Appearance > Menus and there will now be a section on the left side called "Login/Logout", click this and select "Log In|Log Out" and then click "Add to Menu". This will create a dynamic link that will be either a login or logout link.
+   ![Image](images/login_menu.png)
+
+### Hide Account tab from Guest Users
+- **Problem**: We would like to hide the Account tab in the main menu (and its subtabs of Dashboard and Profile) for users that are not logged in
+- **Solution**: To control visibility of menu items:
+   - Download the plugin `Menu Items Visibility Control`, this adds a field for all menu items where PHP or WordPress functions can be used to create conditions and logic for that item
+   - In Appearance > Menus, add the following code to the "Account" item:
+   ![Image](images/menu_visibility.png)
+- **Notes**: I initially tried using the plugin `If Menu` but it interfered with the ability to create a megamenu for items.
 
 ## Other
 
@@ -594,6 +615,7 @@ Quickview After:
 
 ### Cloudflare
 - We set up a cloudflare account to improve website performance and security.
+- Later, we decided it was not worth the $20/month for the website at the moment, so we cancelled the account. See this link for the steps to cancel: [Cancel Cloudflare](https://support.cloudflare.com/hc/en-us/articles/200167776-How-do-I-cancel-or-downgrade-my-Cloudflare-account-)
 
 ### Site Optimization
 - Image re-sizing was successful for our images, but there are still some large images coming from plugins
@@ -601,5 +623,18 @@ Quickview After:
 - Attempted defering some JavaScript but the home page relies on a lot of JS and would not load correctly when I tried to defer it
 - Overall, most of the assets slowing us down are coming from plugins, not our own content, so it is beyond our control (unless we want to deactivate the plugins)
 
-### FB Pixel
-- The FB pixel still does not work correctly, we've tried a number of different approaches including creating a new pixel, adding additional microtags, deleting and reinstalling the Woocommerce for FB app, and deactivating plugins to see if there was interference there.
+### FB Shop
+- Our goals with having the FB Shop/Catalog/Pixel capabilities are 1) be able to tag our products on Instagram, and 2) run ads that contain our products (retargeted or not).
+- Getting the FB shop to work correctly was quite a difficult and time consuming task. We initially thought there was an issue with the FB Pixel itself or the Woocommerce for Facebook Plugin; however, after repeatedly testing these by creating new FB pixels, adding additional microtags, deleting and reinstalling the Woocommerce for FB app, and deactivating plugins to see if there was interference, we still could not get more than 1 product to show up in our Catalog on FB. 
+- Upon investigating why this 1 product would show up but none of the others did (even though the Woocommerce for FB plugin said "all products synced" and the Catalog gave no import errors) I discovered that the 1 product being imported actually had a price of $1 associated with it, and all the other products had a price of $0. I tested adding a price of >$0 to several other products and they suddenly synced to the FB shop. 
+- Now we knew that the problem was that products do not sync to FB from the WordPress site unless they have a price >$0. This requirement was initially overlooked by us because this sync used to work for a previous version of the website where all the products were also $0, so this must be a relatively new requirement on the Facebook end. 
+- However, this presented an issue to us because we do not want the products on the WordPress side to have a price >$0, as it would interfere with the users' monthly checkout. First, I noticed that once a product is synced, its price can be changed back to $0 and it will still show up on the FB shop. So, I did this add a >$0 price, sync, change price back, resync process for all 139 products (for only 1 variation/size for each product). 
+- At first, this seemed to work because all 139 products showed up in the Catalog on our side. But, the products were not actually published to our FB Shop (and therefore not able to be tagged through Instagram either) because their prices were still $0. Upon finding the actual product requirements for FB Stop it became clear we could not have any products published that were free:
+![Image](images/product_requirements.png)
+- To find a work around for this requirement, we came up with the idea of giving each product the price it would be to rent it individually for the month with the Starter Closet membership (i.e. $129/5 ~ $26). 
+- In order to keep the price as $0 on our website, the product's regular price is set to $26 and the sale price is set to $0. This ensures that customers renting the product are not charged the $26. See below for screenshots detailing the steps to follow when adding a new product or if a current product needs to be updated:
+![Image](images/sale1.png)
+![Image](images/sale2.png) Note that a sale start date must be specified for the sale feature it to work, this is done by clicking "Schedule". An end date is not needed. Additionally, this process only needs to be done for ONE of the product variations (the size will not show up on FB Shop)
+- Once these changes have been saved and the product updated, it will be visible on our FB Shop and available to be tagged on Instagram. The product description can be updated on the FB shop by clicking "Edit Product" then editing the description. See screenshots below:
+![Image](images/fbshop1.png)
+![Image](images/fbshop2.png)
