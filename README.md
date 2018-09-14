@@ -3,7 +3,7 @@ Work from July 16 to September 12.
 
 ## Contents
 - [Code](#code)
-   - [The Gem Child Theme](#The-Gem-Child-Theme)
+   - [The Gem Child Theme](##The-Gem-Child-Theme)
    - [Google Fonts](#Google-Fonts)
    - [Refresh CSS](#Refresh-CSS)
    - [ReferralCandy Code](#ReferralCandy-Code)
@@ -597,7 +597,7 @@ Quickview After:
    - Download the plugin `Menu Items Visibility Control`, this adds a field for all menu items where PHP or WordPress functions can be used to create conditions and logic for that item
    - In Appearance > Menus, add the following code to the "Account" item:
    ![Image](images/menu_visibility.png)
-- **Notes**: I initially tried using the plugin `If Menu` but it interfered with the ability to create a megamenu for items.
+- **Notes**: I initially tried using the plugin `If Menu` but it interfered with the ability to create a megamenus.
 
 ## Other
 
@@ -638,3 +638,15 @@ Quickview After:
 - Once these changes have been saved and the product updated, it will be visible on our FB Shop and available to be tagged on Instagram. The product description can be updated on the FB shop by clicking "Edit Product" then editing the description. See screenshots below:
 ![Image](images/fbshop1.png)
 ![Image](images/fbshop2.png)
+- Lastly, I added the following CSS to the `custom.css` file to hide all of the "sale" icons that appear on the website when the sale feature is used:
+```
+div.product-labels {
+	display: none;
+}
+#primary-menu.no-responsive > li.menu-item-cart > .minicart ul li.sale .minicart-image:before, .hamburger-minicart > .minicart ul li.sale .minicart-image:before {
+	display: none;
+}
+.xoo-qv-images span.onsale {
+	display: none;
+}
+```
