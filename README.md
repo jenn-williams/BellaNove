@@ -1,5 +1,5 @@
 # Bella Nove
-Work from July 16 to September 12.
+Work from July 16 to November 7.
 
 ## Contents
 - [Code](#code)
@@ -10,9 +10,12 @@ Work from July 16 to September 12.
    - [Add Product Images to Confirmation Email](#add-product-images-to-confirmation-email)
    - ["Add to Wishlist" within Cart Page](#"add-to-wishlist"-within-cart-page)
    - [User Roles Issue](#user-roles-issue)
-   - [3 Items per Row on "All" Page](3-ttems-per-row-on-"all"-page)
-- [Design/UX](#design/ux)
-   - [Top Menu Consolidation/UX Improvements](#top-menu-consolidation/ux-improvements)
+   - [3 Items per Row on "All" Page](#3-items-per-row-on-"all"-page)
+   - [Product Thumbnail Size](#product-thumbnail-size)
+   - [Change "Memberships" Page](#change-"memberships"-page)
+   - [Payment Page](#payment-page)
+- [Design & UX](#design-&-ux)
+   - [Top Menu Consolidation & UX Improvements](#top-menu-consolidation-&-ux-improvements)
    - [Consolidating Dashboard and Edit Account Pages](#consolidating-dashboard-and-edit-account-pages)
    - [Add a Footer Menu](#add-a-footer-menu)
    - [Format Contact and Gift Form Pages](#format-contact-and-gift-form-pages)
@@ -21,10 +24,20 @@ Work from July 16 to September 12.
    - [Mini-Cart Scroll](#mini-cart-scroll)
    - [Gifting UX](#gifting-ux)
    - ["Registration" Page](#"registration"-page)
-   - [Uniform Fonts / Alignment / Other Added CSS](#uniform-fonts-/-alignment-/-other-added-css)
+   - [Login Page Button Spacing](#login-page-button-spacing)
+   - [Hide Unnecessary Text](#hide-unnecessary-text)
+   - [Reduce Product Page Image Size](#reduce-product-page-image-size)
+   - [Uniform Buttons](#uniform-buttons)
+   - [Too Many Items In Cart](#too-many-items-in-cart)
+   -[Remove Additional Info Tab for Reviews](#remove-additional-info-tab-for-reviews)
+   - [Uniform Fonts, Alignment, & Other Added CSS](#uniform-fonts-,-alignment,-&-other-added-css)
+- [Mobile](#mobile)
+   - [Dashboard](#dashboard)
+   - [Register Page](#register-page)
+   - [Cart Content](#cart-content)
 - [Plugins](#plugins)
    - [Product Reviews](#product-reviews)
-   - [Sitemap/SEO](#sitemap/seo)
+   - [Sitemap & SEO](#sitemap-&-seo)
    - [Quickview](#quickview)
    - [Add Login Button to Menu](add-login-button-to-menu)
 - [Other](#other)
@@ -33,6 +46,7 @@ Work from July 16 to September 12.
    - [Cloudflare](#cloudflare)
    - [Site Optimization](#site-optimization)
    - [Facebook Shop](#facebook-shop)
+   - [Stop Search Engine Crawl](#stop-search-engine-crawl)
 
 
 ## Code
@@ -227,8 +241,199 @@ function loop_columns() {
 add_filter('loop_shop_columns', 'loop_columns', 999);
 ```
 
-## Design/UX
-### Top Menu Consolidation/UX Improvements
+### Product Thumbnail Size
+- **Problem**: The product image thumbnails that appear below the main product page image are cropped to squares, which cuts off the top of our images.
+- **Solution**: Add the following code to the child theme `functions.php` file:
+```
+add_filter( 'woocommerce_get_image_size_gallery_thumbnail', function( $size ) {
+    return array(
+    'width' => 70,
+    'height' => 105,
+    'crop' => 0,
+    );
+} );
+```
+This allows the thumbnails to maintain a constant aspect ratio, therefore not cutting off any part of our images.
+
+Before:
+![Image](images/thumbnails_before.png)
+
+After:
+![Image](images/thumbnails_after.png)
+
+### Change "Memberships" Page
+- **Problem**: The current membership page (/registration/,which appears for logged in users) allows a user to change or cancel their membership, but it looks terrible and has a nonfunctional calendar.
+
+Before:
+![Image](images/memberships_before.png)
+
+- **Solution**: Edit template file and CSS. First, I made  some small text changes to the `class-ms-view-shortcode-membershipsignup.php` template file in .... folder. I changes "Available Memberships" on line 98 to "Other Membership Options":
+![Image](images/membership_template.png)
+
+Next, I added CSS to the child theme `custom.css` to make the page look more similar to the /join-membership/ page by creating rounded grey rectangles and getting rid of the lines and nonfunctional calendars.
+```
+/* registration page */
+.ms-top-bar h4 span.ms-title {
+	font-family: 'Montserrat', Arial, sans-serif;
+}
+
+.ms-signup .ms-top-bar, .ms-signup .ms-bottom-bar{
+	background: none;
+}
+
+.ms-signup {
+	border: none;
+}
+
+.ms-membership-form-wrapper legend {
+	color: #000;
+	font-family: 'Montserrat', Arial, sans-serif;
+	font-size: 2em;
+	padding-bottom: 30px;
+	margin-bottom: 60px;
+	text-transform: uppercase;
+}
+
+.ms-membership-form-wrapper .ms-signup-button {
+	float: none;
+}
+
+.ms-membership-details-wrapper {
+	padding-bottom: 40px;
+}
+
+div.ms-membership-details-wrapper {
+    background-color: #f0f3f2;
+    border-radius: 50px;
+    margin-bottom: 100px !important;
+    margin-left: 15%;
+	width: 70%;
+}
+
+.ms-membership-details-wrapper h4 {
+	font-size: 30px;
+	text-align: center;
+}
+
+/* remove calendar on registration page */
+div.ms-membership-details-wrapper div.ui-datepicker {
+	display: none !important;
+}
+```
+
+After:
+![Image](images/memberships_after.png)
+
+### Payment Page
+- **Problems**: The membership payment page does not look appealing so we want it to look nicer. Also, we want the coupon entry to be less noticeable.
+
+Before:
+![Image](images/payment_pg_before.png)
+
+- **Solution**: Make edits to the `membership_frontend_payment.php` template file in .... to get rid of the table-like appearance of the payment page.
+First, I removed the text from the `<td class='ms-title-column'>`s (in lines 12, 22, 36, 53, 64, 85, 105, 113)
+
+Next, I changed line 14 from 
+```
+<td class="ms-details-column">
+<?php echo get_ms_pm_membership_name(); ?>
+</td>
+```
+to
+```
+<td class="ms-details-column membership-column">
+You have selected the <br /><span class="membership-type"><?php echo get_ms_pm_membership_name();?></span><br /> membership! test
+</td>
+```
+
+Line 41 from `echo get_ms_pm_membership_formatted_price();` to `echo "Price per month: " . get_ms_pm_membership_formatted_price();`
+
+Line 56 from `<?php echo get_ms_pm_invoice_formatted_discount(); ?>` to ` <?php echo "Coupon Discount: " . get_ms_pm_invoice_formatted_discount(); ?>`
+
+Line 67 from ` <?php echo get_ms_pm_invoice_formatted_pro_rate(); ?>` to `<?php echo 'Pro-Rate Discount: ' . get_ms_pm_invoice_formatted_pro_rate(); ?>`
+
+Line 78 from ` <?php echo get_ms_pm_invoice_formatted_tax(); ?>` to `<?php echo get_ms_pm_invoice_tax_name() . ': ' . get_ms_pm_invoice_formatted_tax(); ?>`
+
+Line 90 from
+```
+if ( get_ms_pm_invoice_total() > 0 ) {
+    if ( is_ms_admin_user() ) {
+        echo get_ms_pm_invoice_formatted_total_for_admin();
+    else{
+        echo get_ms_pm_invoice_formatted_total();
+     }
+}
+```
+to
+```
+if ( get_ms_pm_invoice_total() > 0 ) {
+    if ( is_ms_admin_user() ) {
+        echo 'Total: ' . get_ms_pm_invoice_formatted_total_for_admin();
+    }else{
+        echo 'Total: ' .get_ms_pm_invoice_formatted_total();
+    }
+} 
+```
+
+Line 107 from `echo get_ms_pm_invoice_formatted_due_date();` to `echo 'Payment due ' . get_ms_pm_invoice_formatted_due_date();`
+
+
+Line 118 from ` echo get_ms_pm_invoice_formatted_trial_price();` to `echo 'Trial price: ' . get_ms_pm_invoice_formatted_trial_price();`
+
+I also added the following CSS to the child theme `custom.css`:
+```
+/* join membership - purchase table */
+table.ms-purchase-table td.ms-title-column {
+	display: none;
+}
+
+table.ms-purchase-table td {
+	border: none;
+}
+
+table.ms-purchase-table {
+	background-color: #f0f3f2;
+	border-radius: 30px;
+	margin-left: 20%;
+    width: 60%;
+}
+
+/* coupon button */
+button#coupon-btn {
+	border: none;
+    background-color: inherit;
+}
+
+button#coupon-btn span {
+	text-decoration: underline;
+}
+```
+
+For the coupon display, we were able to get some cutom code from WPMU support, which I modified to meet what we wanted.
+
+I added the following custom JavaScript code via the Custom CSS & JS plugin called "Hide Coupon Code":
+```
+<script type="text/javascript">
+jQuery(document).ready(function($){
+   var x = $(".coupon-entry");
+   var y = $(".membership_coupon_form");
+​
+   x.css('display', 'none');
+   y.append($('<button id="coupon-btn">Have a coupon? <span>Click here to enter your code</span></button>'));
+
+    y.click(function() {
+        x.css('display', 'block');
+        $("#coupon-btn").hide();
+    });
+});
+```
+With the following settings: internal, header, in frontend.
+
+After:
+![Image](images/payment_pg_after.png)
+
+## Design & UX
+### Top Menu Consolidation & UX Improvements
 - **Problems**: 1. The large amount of links in the menu is potentially confusing to a user. 2. The BellaNove logo sometimes covers the *Browse Closet* tab. 3. There is a link for *Home* and the BellaNove logo links to *Home* as well.
 - **Solution**: 
    1) I consolidated the links *Browse Closet* and *Lookbook* into one large "megamenu" tab called *Collections*. This was done by going into Appearance > Menus,selecting the top primary menu, adding a custom link page called *Collections*, and then enabling the "megamenu" style 1 with 3 columns. One column for the *Lookbook* link and 2 columns for all the links within the *Browse Closet* tab (*All*, *Bottoms*, *Dresses*, *Outerwear*, and *Tops*). I have included an image of the link order and will list the rest of the settings.
@@ -389,16 +594,149 @@ Screenshot of gift card product page:
 }
 ```
 Before:
-
 ![Image](images/reg_before.png)
 
 After:
-
 ![Image](images/reg_after.png)
 
 Further editing to make this page look even nicer would require editing the template files, because all that is displayed on this page is just a shortcode.
 
-### Uniform Fonts / Alignment / Other Added CSS
+### Login Page Button Spacing
+- **Problem**: On the login/register page, the "Register" button is off to the left side; it also does not match the proper button format.
+- **Solution**: Add CSS to child theme `custom.css`:
+```
+div.ms-membership-form-wrapper {
+	text-align: center;
+}
+
+div.ms-membership-form-wrapper a {
+    align-items: flex-start;
+    background-color: #b6c6c9;
+	border-radius: 3px;
+    color: #fff;
+	font-weight: 700;
+    height: 40px;
+	line-height: 40px;
+	padding-bottom: 10px;
+    padding-left: 17px;
+    padding-right: 17px;
+	padding-top: 10px;
+    position: relative;
+ 	text-align: center;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+```
+This aligns the button with the rest of the form fields and makes it look idential to the "Login" button.
+
+### Hide Unnecessary Text
+- **Problem**: We do not want "By Admin" text to show up during searches and we do not want "Show Blocks Helper" to show up in the filter box on "All" products page.
+
+![Image](images/search_before.png)
+![Image](images/showblockshelper.png)
+
+- **Solution**: Add CSS to child theme `custom.css`:
+```
+/* hide search results posts "by admin" */
+div.post-meta-conteiner {
+	display: none;
+}
+
+/* hide filter text "show blocks helper" */
+div a.woof_edit_view {
+	display: none;
+}
+```
+### Reduce Product Page Image Size
+- **Problem**: Currently, the main image on each product page is too large.
+- **Solution**: In the WP back end, under Appearance > Customize > Woocommerce > Product Images change the `Main Image Width` to 500.
+
+Before:
+![Image](images/product_img_before.png)
+
+After:
+![Image](images/product_img_after.png)
+
+### Uniform Buttons
+- **Problem**: Currently, there are varying styles for buttons on the website. We would like to give all major buttons a uniform appearance. This includes the "Register" button on the Login page, the "Register" button on the Register page, the "Buy Now" button for giftcard product pages, and the Membership "Sign Up/Change/Cancel" buttons on the Registration page.
+
+![Image](images/before_login.png)
+
+![Image](images/before_register.png)
+
+![Image](images/before_buynow.png)
+
+![Image](images/before_membershipbuttons.png)
+
+- **Solution**: Add the following CSS to each button we want to style:
+
+For the main pink buttons:
+```
+form#ms-shortcode-register-user-form button#register,
+button.ms-signup-button,
+span.ms-membership-buy a.button,
+	background-color: rgb(185, 118, 167);
+	border-radius: 3px;
+	color: #fff;
+	font-family: 'Montserrat', Arial, sans-serif;
+	padding: 8px 13px 8px 13px;
+	text-transform: uppercase;
+}
+
+div.ms-membership-form-wrapper a {
+    align-items: flex-start;
+    background-color: #b6c6c9;
+	border-radius: 3px;
+    color: #fff;
+	font-weight: 700;
+    height: 40px;
+	line-height: 40px;
+	padding-bottom: 10px;
+    padding-left: 17px;
+    padding-right: 17px;
+	padding-top: 10px;
+    position: relative;
+ 	text-align: center;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+```
+
+Example of new button style:
+![Image](images/after_button.png)
+
+### Too Many Items In Cart
+- **Problem**: The "too many items in cart" error should contain a link to upgrade membership.
+- **Solution**: Add an href to the membership page via Min and Max Purchase rules in the backend. For "Starter Closet" and "Enhanced Closet Rule", add `or upgrade your membership through the <a href = "https://www.bellanove.com/registeration/">Membership page</a>.` to the "Custom Message" section. 
+
+It now looks like this:
+![Image](images/checkout_warning.png)
+
+### Remove Additional Info Tab for Reviews
+- **Problem**: The reviews plugin contains an "Additional Information" tab that is unnecessary.
+
+Before:
+![Image](images/reviews_before.png)
+
+- **Solution**: Remove "Additional Information" tab by adding CSS to the child theme `custom.css`:
+```
+/* reviews - additional information tab */
+div#tab-additional_information, .wpb-js-composer .vc_tta.vc_general .vc_tta-tab > a[href*="additional_information"] {
+	display: none;
+}
+
+.gem-gallery.gem-gallery-preview-carousel-wrap.gem-gallery-item:hover a img {
+	color: transparent;
+}
+
+.gem-gallery-preview-carousel-wrap .gem-gallery-item a:before {
+	
+}
+```
+After:
+![Image](images/reviews_after.png)
+
+### Uniform Fonts, Alignment, & Other Added CSS
 - **Problem**: Some elements are misaligned, including the main page titles; we want to use the same 2 fonts for everything; miscellaneous
 - **Solution**: Add CSS to child theme `custom.css`:
 ```
@@ -451,6 +789,74 @@ h3.comment-reply-title {
 }
 ```
 
+##Mobile
+### Dashboard Tables
+- **Problem**: For mobile devices, the invoices table under My Account - Dashboard and the orders table under My Account - Orders are cut off. The view all invoices page has the same problem.
+- **Solution**: Add CSS to child theme `custom.css`:
+
+```
+div#account-invoices, div.ms-account-wrapper, div.gem-table-responsive, div.order-details-column {
+	overflow: auto;
+}
+```
+This CSS creates a scroll bar so users can scroll to the left to see the hidden part of the tables.
+
+Previously only this section of invoice table was visible:
+![Image](images/invoice_table1_a.png)
+
+Now, users can scroll to see the rest:
+![Image](images/invoice_table2_a.png)
+
+### Register Page
+- **Problem**: For mobile devices, the register (create an account) page text field labels are not formatted correctly. The "Register My Account" button was also not formatted to match other buttons, for that CSS fix see [Uniform Button Appearance](#uniform-button-appearance).
+- **Solution**: Add CSS to child theme `custom.css`:
+```
+@media only screen and (max-width: 425px) {
+	.ms-form-element .wpmui-field-label {
+		display: block;
+	}
+	.ms-form-element .wpmui-field-input {
+		float: none;
+	}
+}
+```
+
+Before:
+![Image](images/create_account_b.png)
+
+After:
+![Image](images/create_account_a.png)
+
+### Cart Content
+- **Problem**: On mobile, the product images in the cart are very large and this causes the product title, add to wishlist, and delete item to be completely cut off.
+- **Solution**: This image sizing is a Woocommerce plugin problem according to [this article](https://catchthemes.com/support-forum/topic/cart-page-all-content-is-not-visible-in-the-mobile-view/). 
+
+To allow all the information to be visible, I added the following CSS to the child theme `custom.css` file:
+```
+/* mobile cart */
+@media screen and (max-width: 980px) {
+	.woocommerce-page table.shop_table td.product-name {
+		display: block;
+		border: 1px solid #d2d3d3; 
+  		position: relative;
+		float: left;
+	}
+	
+	.woocommerce-page table.shop_table,
+	.woocommerce-page table.shop_table tbody,
+	.woocommerce-page table.shop_table tbody tr,
+	.woocommerce-page table.shop_table td.product-remove, 
+	.woocommerce-page table.shop_table td.product-name,
+	.woocommerce-page table.shop_table td.product-thumbnail {
+		border: none !important;
+	}
+	
+	.woocommerce-page table.shop_table tr { 
+  		display: block; 
+  	}
+}
+```
+
 ## Plugins
 ### Product Reviews
 - **Problem**: We would like to enable users to write reviews and upload pictures for products
@@ -463,7 +869,7 @@ h3.comment-reply-title {
    - Review Reminders: disable
 - **Issue**: The only issue with this plugin is that user's cannot write reviews while logged in; the entire "Write a Review" section only appears on a product page when user is not logged in.
 
-### Sitemap/SEO
+### Sitemap & SEO
 - **Problem**: We would like make a sitemap to help search engines crawl our site the way we would like.
 - **Solution**: First, I privated all of the pages that are not currently being used, so the sitemap will not link to them. Then I downloaded and enabled the "Google XML Sitemaps" plugin. Settings for this plugin are found within Settings > XML-Sitemap. All of the default settings can be kept except for the "Sitemap Content" section which should be enabled like this: 
 
@@ -483,7 +889,7 @@ Additionally, any time that these settings are updated you need to resend the up
 
 
 ### Quickview
-- **Problem**: We would like to have a quick view option for each product
+- **Problem 1**: We would like to have a quick view option for each product
 - **Solution**: In Appearance > Theme Options > General > Woocommerce settings, I disabled Quick View. This quick view that is included with TheGem does not work correctly for all of our product pages (only worked for the "All" page which is the Woocommerce designated "Shop" page). Instead, I downloaded and enabled a plugin called "Quick View WooCommerce". I configured the following settings from the WordPress backend:
 
 ![Image](images/qv_1.png)
@@ -578,6 +984,32 @@ Quickview Before:
 Quickview After:
 
 ![Image](images/qv_after.png)
+
+- **Problem 2**: When you hover over a product under "You May Be Interested In", the Quickview button appears in the middle of the item and blocks text. Additionally, we would like to remove the Quickview button for gift card products because it is not necessary.
+- **Solution**: Add some CSS to the child theme `custom.css` to fix these issues.
+
+For the "You May Be Interested In" products:
+```
+.related-products .product-bottom a {
+	top: 50% !important;
+}
+```
+This CSS ensures that the button will not block any text (though there will be some variation in the placement of the button based on overall height of the product card).
+
+"You May Be Interested In" Products Before:
+![Image](images/related_qv_before.png)
+
+"You May Be Interested In" Products After:
+![Image](images/related_qv_after.png)
+
+For the gift card products:
+```
+.products .product-type-gift-card .product-bottom  a {
+	display: none;
+}
+```
+This CSS removes the quickview button completely.
+
 
 ### Add Login Button to Menu
 - **Problem**: We would like to add a Login/Logout button to the main menu of the site
