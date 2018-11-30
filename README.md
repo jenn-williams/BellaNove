@@ -29,7 +29,7 @@ Work from July 16 to November 7.
    - [Reduce Product Page Image Size](#reduce-product-page-image-size)
    - [Uniform Buttons](#uniform-buttons)
    - [Too Many Items In Cart](#too-many-items-in-cart)
-   -[Remove Additional Info Tab for Reviews](#remove-additional-info-tab-for-reviews)
+   - [Remove Additional Info Tab for Reviews](#remove-additional-info-tab-for-reviews)
    - [Uniform Fonts, Alignment, and Other Added CSS](#uniform-fonts-,-alignment,-and-other-added-css)
 - [Mobile](#mobile)
    - [Dashboard](#dashboard)
@@ -261,12 +261,16 @@ After:
 ![Image](images/thumbnails_after.png)
 
 ### Change Memberships Page
-- **Problem**: The current membership page (/registration/,which appears for logged in users) allows a user to change or cancel their membership, but it looks terrible and has a nonfunctional calendar.
+- **Problem**: The current membership page (/registration/,which appears for logged in users) allows a user to change or cancel their membership, but it looks terrible and has a nonfunctional calendar. 
 
 Before:
 ![Image](images/memberships_before.png)
 
-- **Solution**: Edit template file and CSS. First, I made  some small text changes to the `class-ms-view-shortcode-membershipsignup.php` template file in .... folder. I changes "Available Memberships" on line 98 to "Other Membership Options":
+- **Solution**: Edit template file and CSS. First, I made  some small text changes to the `class-ms-view-shortcode-membershipsignup.php` template file in plugins > membership-pro > app > view > shortcode folder. 
+
+**Note that these changes will be overridden when the plugin is updated, so these changes will need to be copied over to the updated template files.**
+
+I changes "Available Memberships" on line 98 to "Other Membership Options":
 ![Image](images/membership_template.png)
 
 Next, I added CSS to the child theme `custom.css` to make the page look more similar to the /join-membership/ page by creating rounded grey rectangles and getting rid of the lines and nonfunctional calendars.
@@ -324,12 +328,15 @@ After:
 ![Image](images/memberships_after.png)
 
 ### Payment Page
-- **Problems**: The membership payment page does not look appealing so we want it to look nicer. Also, we want the coupon entry to be less noticeable.
+- **Problems**: The membership payment page does not look appealing so we want it to look nicer. Also, we want the coupon entry to be less noticeable. 
 
 Before:
 ![Image](images/payment_pg_before.png)
 
-- **Solution**: Make edits to the `membership_frontend_payment.php` template file in .... to get rid of the table-like appearance of the payment page.
+- **Solution**: Make edits to the `membership_frontend_payment.php` template file in plugins > membership-pro > app > view > templates folder to get rid of the table-like appearance of the payment page. 
+
+**Note that these changes will be overridden when the plugin is updated, so these changes will need to be copied over to the updated template files.**
+
 First, I removed the text from the `<td class='ms-title-column'>`s (in lines 12, 22, 36, 53, 64, 85, 105, 113)
 
 Next, I changed line 14 from 
@@ -702,6 +709,7 @@ div.ms-membership-form-wrapper a {
 ```
 
 Example of new button style:
+
 ![Image](images/after_button.png)
 
 ### Too Many Items In Cart
