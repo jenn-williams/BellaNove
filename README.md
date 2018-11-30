@@ -8,14 +8,14 @@ Work from July 16 to November 7.
    - [Refresh CSS](#refresh-css)
    - [ReferralCandy Code](#referralcandy-code)
    - [Add Product Images to Confirmation Email](#add-product-images-to-confirmation-email)
-   - ["Add to Wishlist" within Cart Page](#"add-to-wishlist"-within-cart-page)
+   - [Add to Wishlist within Cart Page](#add-to-wishlist-within-cart-page)
    - [User Roles Issue](#user-roles-issue)
-   - [3 Items per Row on "All" Page](#3-items-per-row-on-"all"-page)
+   - [3 Items per Row on All Page](#3-items-per-row-on-all-page)
    - [Product Thumbnail Size](#product-thumbnail-size)
-   - [Change "Memberships" Page](#change-"memberships"-page)
+   - [Change Memberships Page](#change-memberships-page)
    - [Payment Page](#payment-page)
-- [Design & UX](#design-&-ux)
-   - [Top Menu Consolidation & UX Improvements](#top-menu-consolidation-&-ux-improvements)
+- [Design and UX](#design-and-ux)
+   - [Top Menu Consolidation and UX Improvements](#top-menu-consolidation-&-ux-improvements)
    - [Consolidating Dashboard and Edit Account Pages](#consolidating-dashboard-and-edit-account-pages)
    - [Add a Footer Menu](#add-a-footer-menu)
    - [Format Contact and Gift Form Pages](#format-contact-and-gift-form-pages)
@@ -23,21 +23,21 @@ Work from July 16 to November 7.
    - [Remove Buttons on Product Cards](#remove-buttons-on-product-cards)
    - [Mini-Cart Scroll](#mini-cart-scroll)
    - [Gifting UX](#gifting-ux)
-   - ["Registration" Page](#"registration"-page)
+   - [Registration Page](#registration-page)
    - [Login Page Button Spacing](#login-page-button-spacing)
    - [Hide Unnecessary Text](#hide-unnecessary-text)
    - [Reduce Product Page Image Size](#reduce-product-page-image-size)
    - [Uniform Buttons](#uniform-buttons)
    - [Too Many Items In Cart](#too-many-items-in-cart)
    -[Remove Additional Info Tab for Reviews](#remove-additional-info-tab-for-reviews)
-   - [Uniform Fonts, Alignment, & Other Added CSS](#uniform-fonts-,-alignment,-&-other-added-css)
+   - [Uniform Fonts, Alignment, and Other Added CSS](#uniform-fonts-,-alignment,-and-other-added-css)
 - [Mobile](#mobile)
    - [Dashboard](#dashboard)
    - [Register Page](#register-page)
    - [Cart Content](#cart-content)
 - [Plugins](#plugins)
    - [Product Reviews](#product-reviews)
-   - [Sitemap & SEO](#sitemap-&-seo)
+   - [Sitemap and SEO](#sitemap-and-seo)
    - [Quickview](#quickview)
    - [Add Login Button to Menu](add-login-button-to-menu)
 - [Other](#other)
@@ -46,7 +46,6 @@ Work from July 16 to November 7.
    - [Cloudflare](#cloudflare)
    - [Site Optimization](#site-optimization)
    - [Facebook Shop](#facebook-shop)
-   - [Stop Search Engine Crawl](#stop-search-engine-crawl)
 
 
 ## Code
@@ -129,7 +128,7 @@ function iconic_email_order_items_args( $args ) {
 ```
 See these links for more info about the code snippets: [1](https://www.cloudways.com/blog/add-product-images-skus-to-woocommerce-order-emails/) [2](https://wordpress.stackexchange.com/questions/274960/woocommerce-3-1-add-product-image-to-order-confirmation-email-not-working)
 
-### "Add to Wishlist" within Cart Page
+### Add to Wishlist within Cart Page
 - **Problem**: We would like to add an "Add to Wishlist" button for each product in a user's cart.
 - **Solution**: Add code to `functions.php`:
 ```
@@ -231,7 +230,7 @@ function assign_default_role( $user_id = 0 ){
 }
 ```
 
-### 3 Items per Row on "All" Page
+### 3 Items per Row on All Page
 - **Problems**: The "All" product page (Woocommerce designated "Shop" page) has 4 items per row whereas all of the other product pages have 3 items per row. The smaller image size for the "All" page interferes with the quickview button placement.
 - **Solution**: Add the following code to the child theme `functions.php` file:
 ```
@@ -261,7 +260,7 @@ Before:
 After:
 ![Image](images/thumbnails_after.png)
 
-### Change "Memberships" Page
+### Change Memberships Page
 - **Problem**: The current membership page (/registration/,which appears for logged in users) allows a user to change or cancel their membership, but it looks terrible and has a nonfunctional calendar.
 
 Before:
@@ -432,8 +431,8 @@ With the following settings: internal, header, in frontend.
 After:
 ![Image](images/payment_pg_after.png)
 
-## Design & UX
-### Top Menu Consolidation & UX Improvements
+## Design and UX
+### Top Menu Consolidation and UX Improvements
 - **Problems**: 1. The large amount of links in the menu is potentially confusing to a user. 2. The BellaNove logo sometimes covers the *Browse Closet* tab. 3. There is a link for *Home* and the BellaNove logo links to *Home* as well.
 - **Solution**: 
    1) I consolidated the links *Browse Closet* and *Lookbook* into one large "megamenu" tab called *Collections*. This was done by going into Appearance > Menus,selecting the top primary menu, adding a custom link page called *Collections*, and then enabling the "megamenu" style 1 with 3 columns. One column for the *Lookbook* link and 2 columns for all the links within the *Browse Closet* tab (*All*, *Bottoms*, *Dresses*, *Outerwear*, and *Tops*). I have included an image of the link order and will list the rest of the settings.
@@ -557,7 +556,7 @@ Screenshot of gift card product page:
 
 ![Image](images/gift_product_page.png)
 
-### "Registration" Page
+### Registration Page
 - **Problem**: The Membership2 defined "Registration" page does not work the way we want it to. Specifically, we want to make sure users have the option to cancel their membership here. This page is where users are taken when they click "Change" in their dashboard page, like below:
 
 ![Image](images/change_membership.png)
@@ -736,7 +735,7 @@ div#tab-additional_information, .wpb-js-composer .vc_tta.vc_general .vc_tta-tab 
 After:
 ![Image](images/reviews_after.png)
 
-### Uniform Fonts, Alignment, & Other Added CSS
+### Uniform Fonts, Alignment, and Other Added CSS
 - **Problem**: Some elements are misaligned, including the main page titles; we want to use the same 2 fonts for everything; miscellaneous
 - **Solution**: Add CSS to child theme `custom.css`:
 ```
@@ -869,7 +868,7 @@ To allow all the information to be visible, I added the following CSS to the chi
    - Review Reminders: disable
 - **Issue**: The only issue with this plugin is that user's cannot write reviews while logged in; the entire "Write a Review" section only appears on a product page when user is not logged in.
 
-### Sitemap & SEO
+### Sitemap and SEO
 - **Problem**: We would like make a sitemap to help search engines crawl our site the way we would like.
 - **Solution**: First, I privated all of the pages that are not currently being used, so the sitemap will not link to them. Then I downloaded and enabled the "Google XML Sitemaps" plugin. Settings for this plugin are found within Settings > XML-Sitemap. All of the default settings can be kept except for the "Sitemap Content" section which should be enabled like this: 
 
