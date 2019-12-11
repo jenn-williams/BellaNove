@@ -1,9 +1,16 @@
 # Bella Nove
 
 
-## Work from November-December 2019
--[Major Code Changes](#code-changes)
-	-[Add Billing Address](#add-billing-address)
+## Work from November to December 2019
+- [Code Changes](#code-changes)
+	- [Add Billing Address](#add-billing-address)
+	- [Purchase Page Aesthetics](#purchase-page-aesthetics)
+	- [Change Email Sender](#change-email-sender)
+	- [Hide Prices](#hide-prices)
+- [Design and CSS Changes](#design-and-css-changes)
+	- [Quickview](#quickview)
+	- [Cart Dropdown](#cart-dropdown)
+
 
 ## Work from July 16 to November 7 2018.
 - [Code](#code)
@@ -51,7 +58,7 @@
    - [Site Optimization](#site-optimization)
    - [Facebook Shop](#facebook-shop)
 
-## Major Code Changes
+## Code Changes
 ### Add Billing Address
 - **Problem**: We would like to add a billing address form to the membership sign up page. It needs to persist on the "My Account" page under "Addresses" and the checkout page.
 - **Solution**: Add this code to `functions.php`:
@@ -167,6 +174,9 @@ if( !is_admin() )
     }
    
 }
+
+References: [WP Developer Docs](https://developer.wordpress.org/reference/hooks/user_register/), [StackOverflow 1](https://stackoverflow.com/questions/37510687/hide-billing-address-from-checkout-page-but-keep-the-information/37511524#37511524), [StackOverflow2](https://stackoverflow.com/questions/39964783/add-billing-address-to-woocommerce-registration-page)
+
 ```
 Add some CSS to `custom.css` to keep consistency with the rest of the form:
 ```
@@ -246,192 +256,150 @@ div.ms-membership-form-wrapper a.wpmui-link {
 - **Solution**: Almost complete re-write of `membership_frontend_payment.php` in `plugins/membership-pro/app/view/templates`:
 
 Original
+
 ```
 <?php/**
 * this file contains updates to the payment page 
 **/?>
 <div class="<?php echo get_ms_pm_membership_wrapper_class(); ?>">
-        <legend><?php _e( 'Join Membership', 'membership2' ) ?></legend>
-        <p class="ms-alert-box <?php echo get_ms_pm_alert_box_class(); ?>">
-                <?php echo get_ms_pm_message(); ?>
-        </p>
-        <table class="ms-purchase-table">
-                <tr>
-                        <td class="ms-title-column">
-                                
-                        </td>
-                        <td class="ms-details-column membership-column">
-                                You have selected the <br /><span class="membership-type"><?php echo get_ms_pm_membership_name();?></span><br /> membership!
-                        </td>
-                </tr>
-
-                <?php if ( is_ms_pm_membership_description() ) : ?>
-                        <tr>
-                                <td class="ms-title-column">
-                                        
-                                </td>
-                                <td class="ms-desc-column">
-                                        <span class="ms-membership-description"><?php
-                                                echo get_ms_pm_membership_description();
-                                        ?></span>
-                                </td>
-                        </tr>
-                <?php endif; ?>
-
-                <?php if ( ! is_ms_pm_membership_free() ) : ?>
-                        <?php if ( is_ms_pm_invoice_discount() || is_ms_pm_invoice_pro_rate() || is_ms_pm_invoice_tax_rate() ) : ?>
-                        <tr>
-                                <td class="ms-title-column">
-                                        
-                                </td>
-                                <td class="ms-details-column">
-                                        <?php
-                                        if ( get_ms_pm_membership_price() > 0 ) {
-                                                echo "Price per month: " . get_ms_pm_membership_formatted_price();
-                                        } else {
-                                                _e( 'Free', 'membership2' );
-                                        }
-                                        ?>
-                                </td>
-                        </tr>
-                        <?php endif; ?>
-
-                        <?php if ( is_ms_pm_invoice_discount() ) : ?>
-                                <tr>
-                                        <td class="ms-title-column">
-                                                
-                                        </td>
-                                        <td class="ms-price-column">
-                                                <?php echo "Coupon Discount: " . get_ms_pm_invoice_formatted_discount(); ?>
-                                        </td>
-                                </tr>
-                        <?php endif; ?>
-
-                        <?php if ( is_ms_pm_invoice_pro_rate() ) : ?>
-                                <tr>
-                                        <td class="ms-title-column">
-                                           
-                                        </td>
-                                        <td class="ms-price-column">
-                                                <?php echo 'Pro-Rate Discount: ' . get_ms_pm_invoice_formatted_pro_rate(); ?>
-                                        </td>
-                                </tr>
-                        <?php endif; ?>
-
-                        <?php if ( is_ms_pm_show_tax() ) : ?>
-                                <tr>
-                                        <td class="ms-title-column">
-                                                <?php echo get_ms_pm_invoice_tax_name(); ?>
-                                        </td>
-                                        <td class="ms-price-column">
-                                                <?php echo get_ms_pm_invoice_tax_name() . ': ' . get_ms_pm_invoice_formatted_tax(); ?>
-                                        </td>
-                                </tr>
-                        <?php endif; ?>
-
-                        <tr>
-                                <td class="ms-title-column">
-                                        
-                                </td>
-                                <td class="ms-price-column ms-total">
-                                        <?php
-                                        if ( get_ms_pm_invoice_total() > 0 ) {
-                                            if ( is_ms_admin_user() ) {
-                                                echo 'Total: ' . get_ms_pm_invoice_formatted_total_for_admin();
-                                            }else{
-                                                echo 'Total: ' .get_ms_pm_invoice_formatted_total();
-                                            }
-                                        } else {
-                                                _e( 'Free', 'membership2' );
-                                        }
-                                        ?>
-                                </td>
-                        </tr>
-
-                        <?php if ( is_ms_pm_trial() ) : ?>
-                                <tr>
-                                        <td class="ms-title-column">
-                                                
-                                        </td>
-                                        <td class="ms-desc-column"><?php
-                                                echo 'Payment due ' . get_ms_pm_invoice_formatted_due_date();
-                                        ?></td>
-                                </tr>
-                                <tr>
-                                        <td class="ms-title-column">
-                                            
-                                        </td>
-                                        <td class="ms-desc-column">
-                                        <?php
-                                        if ( get_ms_pm_invoice_trial_price() > 0 ) {
-                                                echo 'Trial price: ' . get_ms_pm_invoice_formatted_trial_price();
-                                        } else {
-                                                _e( 'Free', 'membership2' );
-                                        }
-                                        ?>
-                                        </td>
-                                </tr>
-                        <?php endif; ?>
-
-                        <?php
-                        do_action(
-                                'ms_view_frontend_payment_after_total_row',
-                                get_ms_payment_subscription(),
-                                get_ms_payment_invoice(),
-                                get_ms_payment_obj()
-                        );
-                        ?>
-
-                        <tr>
-                                <td class="ms-desc-column" colspan="2">
-                                        <span class="ms-membership-description"><?php
-                                                echo get_ms_pm_invoice_payment_description();
-                                        ?></span>
-                                </td>
-                        </tr>
-                <?php endif; ?>
-
-                <?php if ( is_ms_pm_cancel_warning() ) : ?>
-                        <tr>
-                                <td class="ms-desc-warning" colspan="2">
-                                        <span class="ms-cancel-other-memberships"><?php
-                                                echo get_ms_pm_cancel_warning();
-                                        ?></span>
-                                </td>
-                        </tr>
-                <?php endif;
-
-                if ( is_ms_admin_user() ) : ?>
-                        <tr>
-                                <td class="ms-desc-adminnote" colspan="2">
-                                        <em><?php
-                                        _e( 'As admin user you already have access to this membership', 'membership2' );
-                                        ?></em>
-                                </td>
-                        </tr>
-                <?php else :
-                        do_action(
-                                'ms_view_frontend_payment_purchase_button',
-                                get_ms_payment_subscription(),
-                                get_ms_payment_invoice(),
-                                get_ms_payment_obj()
-                        );
-                endif;
-                ?>
-        </table>
+    <legend><?php _e( 'Join Membership', 'membership2' ) ?></legend>
+    <p class="ms-alert-box <?php echo get_ms_pm_alert_box_class(); ?>">
+        <?php echo get_ms_pm_message(); ?>
+    </p>
+    <table class="ms-purchase-table">
+        <tr>
+            <td class="ms-title-column"></td>
+            <td class="ms-details-column membership-column">
+                You have selected the <br /><span class="membership-type"><?php echo get_ms_pm_membership_name();?></span><br /> membership!
+            </td>
+         </tr>
+		<?php if ( is_ms_pm_membership_description() ) : ?>
+        <tr>
+            <td class="ms-title-column"></td>
+            <td class="ms-desc-column">
+                <span class="ms-membership-description"><?php echo get_ms_pm_membership_description();?></span>
+            </td>
+         </tr>
+        <?php endif; ?>
+		<?php if ( ! is_ms_pm_membership_free() ) : ?>
+        <?php if ( is_ms_pm_invoice_discount() || is_ms_pm_invoice_pro_rate() || is_ms_pm_invoice_tax_rate() ) : ?>
+        <tr>
+            <td class="ms-title-column"></td>
+            <td class="ms-details-column">
+            <?php
+                if ( get_ms_pm_membership_price() > 0 ) {
+                    echo "Price per month: " . get_ms_pm_membership_formatted_price();
+                } else {
+                    _e( 'Free', 'membership2' );
+                }?>
+            </td>
+        </tr>
+        <?php endif; ?>
+		<?php if ( is_ms_pm_invoice_discount() ) : ?>
+        <tr>
+            <td class="ms-title-column"></td>
+            <td class="ms-price-column">
+                <?php echo "Coupon Discount: " . get_ms_pm_invoice_formatted_discount(); ?>
+            </td>
+        </tr>
+        <?php endif; ?>
+		<?php if ( is_ms_pm_invoice_pro_rate() ) : ?>
+        <tr>
+            <td class="ms-title-column"></td>
+            <td class="ms-price-column">
+                <?php echo 'Pro-Rate Discount: ' . get_ms_pm_invoice_formatted_pro_rate(); ?>
+            </td>
+        </tr>
+        <?php endif; ?>
+		<?php if ( is_ms_pm_show_tax() ) : ?>
+        <tr>
+            <td class="ms-title-column">
+                <?php echo get_ms_pm_invoice_tax_name(); ?>
+            </td>
+            <td class="ms-price-column">
+                <?php echo get_ms_pm_invoice_tax_name() . ': ' . get_ms_pm_invoice_formatted_tax(); ?>
+            </td>
+        </tr>
+        <?php endif; ?>
+		<tr>
+            <td class="ms-title-column"></td>
+            <td class="ms-price-column ms-total">
+            <?php
+                if ( get_ms_pm_invoice_total() > 0 ) {
+                    if ( is_ms_admin_user() ) {
+                        echo 'Total: ' . get_ms_pm_invoice_formatted_total_for_admin();
+                    	} else {
+                            echo 'Total: ' .get_ms_pm_invoice_formatted_total();
+                        }
+                    } else {
+                        _e( 'Free', 'membership2' );
+                }?>
+            </td>
+        </tr>
+		<?php if ( is_ms_pm_trial() ) : ?>
+        <tr>
+            <td class="ms-title-column"></td>
+            <td class="ms-desc-column"><?php echo 'Payment due ' . get_ms_pm_invoice_formatted_due_date();?></td>
+        </tr>
+        <tr>
+            <td class="ms-title-column"></td>
+            <td class="ms-desc-column">
+            <?php
+                if ( get_ms_pm_invoice_trial_price() > 0 ) {
+                    echo 'Trial price: ' . get_ms_pm_invoice_formatted_trial_price();
+                } else {
+                    _e( 'Free', 'membership2' );
+                }?>
+            </td>
+        </tr>
+        <?php endif; ?>
+		<?php
+			do_action(
+			'ms_view_frontend_payment_after_total_row',
+            get_ms_payment_subscription(),
+            get_ms_payment_invoice(),
+            get_ms_payment_obj());?>
+		<tr>
+            <td class="ms-desc-column" colspan="2">
+                <span class="ms-membership-description"><?php echo get_ms_pm_invoice_payment_description();?></span>
+            </td>
+        </tr>
+        <?php endif; ?>
+		<?php if ( is_ms_pm_cancel_warning() ) : ?>
+        <tr>
+            <td class="ms-desc-warning" colspan="2">
+                <span class="ms-cancel-other-memberships"><?php echo get_ms_pm_cancel_warning();?></span>
+            </td>
+        </tr>
+        <?php endif;
+		if ( is_ms_admin_user() ) : ?>
+        <tr>
+            <td class="ms-desc-adminnote" colspan="2">
+                <em><?php _e( 'As admin user you already have access to this membership', 'membership2' );?></em>
+            </td>
+        </tr>
+        <?php else :
+            do_action(
+                'ms_view_frontend_payment_purchase_button',
+                get_ms_payment_subscription(),
+                get_ms_payment_invoice(),
+                get_ms_payment_obj());
+        endif;?>
+    </table>
 </div>
 <?php
 do_action( 'ms_view_frontend_payment_after', get_ms_payment_obj_data(), get_ms_payment_obj() );
 do_action( 'ms_show_prices' );
 
 if ( is_ms_pm_show_tax() ) {
-        do_action( 'ms_tax_editor', get_ms_payment_invoice() );
+    do_action( 'ms_tax_editor', get_ms_payment_invoice() );
 }
 ?>
 <div style="clear:both;"></div>
 ```
 
 New
+
 ```
 <?php/**
 * this file contains updates to the payment page 
@@ -553,7 +521,9 @@ if ( is_ms_pm_show_tax() ) {
 ?>
 <div style="clear:both;"></div>
 ```
+
 Also added some CSS to `custom.css`:
+
 ```
 /* membership payment page - update 12/2019*/
 .membership-payment-page {
@@ -575,6 +545,175 @@ Also added some CSS to `custom.css`:
 }
 
 ```
+
+### Change Email Sender
+- **Problem**: We would like emails sent by WordPress to come from "BellaNove" instead of "Wordpress"
+- **Solution**: Add this code to `functions.php`:
+
+```
+// Function to change email address
+function wpb_sender_email( $original_email_address ) {
+    return 'hello@bellanove.com';
+}
+ 
+// Function to change sender name
+function wpb_sender_name( $original_email_from ) {
+    return 'BellaNove';
+}
+ 
+// Hooking up our functions to WordPress filters 
+add_filter( 'wp_mail_from', 'wpb_sender_email' );
+add_filter( 'wp_mail_from_name', 'wpb_sender_name' );
+```
+
+[Reference](https://www.wpbeginner.com/plugins/how-to-change-sender-name-in-outgoing-wordpress-email/)
+
+
+### Hide Prices
+- **Problem**: We do not want prices to show up anywhere on the site; prices appear on wishlist page, mini cart dropdown, cart page, checkout page, order confirmation page, order confirmation email, and in My Account page under "Orders" > order #.
+- **Solution**: 
+
+Additions to `custom.css`:
+
+```
+/* mini cart dropdown */
+#primary-menu.no-responsive > li.menu-item-cart > .minicart ul li .quantity,
+#primary-menu.no-responsive > li.menu-item-cart > .minicart .total {
+	display: none;
+}
+
+/* cart page */
+.woocommerce-cart-form .shop_table .product-price,
+.woocommerce-cart-form .shop_table .product-subtotal, 
+div.cart_totals.calculated_shipping {
+	display: none;
+}
+
+.cart-collaterals {
+	display: none;
+}
+
+/* checkout page */
+.woocommerce-checkout-one-page #order_review table thead th.product-total,
+.woocommerce-checkout-one-page #order_review table tbody tr td.product-total,
+.woocommerce-checkout-one-page #order_review table tr.cart-subtotal,
+.woocommerce-checkout-one-page #order_review table tr.order-total {
+	display: none;
+}
+
+.shop_table .product-name .product-title  {
+	display: flex;
+	justify-content: space-between;
+}
+
+/* wishlist */
+.woocommerce .wishlist_table .product-price {
+	display: none;
+}
+
+/* order confirmation page */
+.woocommerce .shop_table thead tr th.woocommerce-table__product-table.product-total {
+	display: none;
+
+}
+.woocommerce ul.order_details li.woocommerce-order-overview__total.total {
+	display: none;
+}
+.woocommerce .shop_table tbody tr td.woocommerce-table__product-total.product-total {
+	display: none;
+}
+/* cart totals table */
+div.col-sm-12.col-md-6.order-details-column,
+div.col-sm-12.order-details-column {
+	display: none;
+}
+div.col-xs-12.col-md-6.order-details-column {
+	width: 100%;
+}
+.woocommerce .shop_table thead tr th.product-quantity,
+.woocommerce .shop_table tbody tr td.product-quantity {
+	border-right:#dfe5e8 1px solid;
+}
+```
+
+For the email change, I needed to add some template overrides for `email-order-details.php` and `email-order-item.php` in `themes/the-gem-child-new/woocommerce/emails/`, the only edits were the removal of these lines of code:
+
+From `email-order-details.php`:
+
+```
+$item_totals = $order->get_order_item_totals();
+
+if ( $item_totals ) {
+	$i = 0;
+	foreach ( $item_totals as $total ) {
+	$i++;
+	?>
+	<tr>
+		<th class="td" scope="row" colspan="2" style="text-align:<?php echo esc_attr( $text_align ); ?>; <?php echo ( 1 === $i ) ? 'border-top-width: 4px;' : ''; ?>"><?php echo wp_kses_post( $total['label'] ); ?></th>
+		<td class="td" style="text-align:<?php echo esc_attr( $text_align ); ?>; <?php echo ( 1 === $i ) ? 'border-top-width: 4px;' : ''; ?>"><?php echo wp_kses_post( $total['value'] ); ?></td>
+	</tr>
+	<?php
+	}
+}
+
+```
+
+and
+
+```
+<th class="td" scope="col" style="text-align:<?php echo esc_attr( $text_align ); ?>;"><?php esc_html_e( 'Price', 'woocommerce' ); ?></th>
+```
+
+From `email-order-item.php`:
+
+```
+<td class="td" style="text-align:<?php echo esc_attr( $text_align ); ?>; vertical-align:middle; font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;">
+	<?php echo wp_kses_post( $order->get_formatted_line_subtotal( $item ) ); ?>
+</td>
+```
+
+[Reference](https://wordpress.org/support/topic/remove-price-woocommerce-new-order-template/)
+
+
+## Design & CSS Changes
+### Quickview
+- **Problem**: There are some issues with quickview layout
+- **Solution**: Additions to `custom.css`:
+
+```
+div.xoo-qv-container {
+	height: 90%;
+}
+
+div.woocommerce-product-details__short-description {
+	font-size: 1.25rem;
+}
+
+a.reset_variations {
+	display: inline;
+    margin-left: 1rem;
+}
+
+div.woocommerce-product-details__short-description > p {
+	margin-bottom: 5px;
+}
+
+.woocommerce-variation.single_variation .woocommerce-variation-availability {
+	padding: 10px;
+}
+
+div.xoo-qv-summary .single_add_to_cart_button {
+	margin-top: 0px;
+	margin-bottom: 10px;
+}
+
+div.variations_button {
+	margin-top: 10px;
+}
+```
+
+
+
 
 ## Code
 ### The Gem Child Theme
