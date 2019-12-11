@@ -1,7 +1,11 @@
 # Bella Nove
-Work from July 16 to November 7.
 
-## Contents
+
+## Work from November-December 2019
+-[Major Code Changes](#code-changes)
+	-[Add Billing Address](#add-billing-address)
+
+## Work from July 16 to November 7 2018.
 - [Code](#code)
    - [The Gem Child Theme](#the-gem-child-theme)
    - [Google Fonts](#google-fonts)
@@ -47,6 +51,530 @@ Work from July 16 to November 7.
    - [Site Optimization](#site-optimization)
    - [Facebook Shop](#facebook-shop)
 
+## Major Code Changes
+### Add Billing Address
+- **Problem**: We would like to add a billing address form to the membership sign up page. It needs to persist on the "My Account" page under "Addresses" and the checkout page.
+- **Solution**: Add this code to `functions.php`:
+```
+if( !is_admin() )
+{
+    // Function to check starting char of a string
+    function startsWith($haystack, $needle)
+    { 
+        return $needle === '' || strpos($haystack, $needle) === 0;
+    }
+
+    // Custom function to display the Billing Address form to registration page
+    add_action('register_form','add_billing_form');
+    function add_billing_form()
+    {
+        global $woocommerce;
+        $checkout = $woocommerce->checkout();
+
+        ?>
+            <h3><?php _e( 'Billing Address', 'woocommerce' ); ?></h3>
+        <?php
+
+        foreach ($checkout->checkout_fields['billing'] as $key => $field) :
+            if($key!='billing_email')
+                woocommerce_form_field( $key, $field, $checkout->get_value( $key ) );
+        endforeach;
+    }
+    
+
+    // Custom function to save Usermeta or Billing Address of registered user
+    add_action('user_register','save_address');
+    function save_address($user_id)
+    {
+        global $woocommerce;
+        $address = $_POST;
+
+        foreach ($address as $key => $field) :
+            if(startsWith($key,'billing_'))
+            {
+                // Condition to add firstname and last name to user meta table
+                if($key == 'billing_first_name' || $key == 'billing_last_name')
+                {
+                    $new_key = explode('billing_',$key);
+                    update_user_meta( $user_id, $new_key[1], $_POST[$key] );
+                }
+                update_user_meta( $user_id, $key, $_POST[$key] );
+            }
+        endforeach;
+    }
+    
+
+    // Registration page billing address form Validation
+    add_action('register_post', 'custom_validation');
+    function custom_validation()
+    {
+        global $woocommerce;
+        $address = $_POST;
+
+        foreach ($address as $key => $field) :
+
+            // Validation: Required fields
+            if(startsWith($key,'billing_'))
+            {
+
+                if($key == 'billing_country' && $field == '')
+                {
+                    $woocommerce->add_error( '' . __( 'ERROR', 'woocommerce' ) . ': ' . __( 'Please select a country.', 'woocommerce' ) );
+                }
+
+                if($key == 'billing_first_name' && $field == '')
+                {
+                    $woocommerce->add_error( '' . __( 'ERROR', 'woocommerce' ) . ': ' . __( 'Please enter first name.', 'woocommerce' ) );
+                }
+
+                if($key == 'billing_last_name' && $field == '')
+                {
+                    $woocommerce->add_error( '' . __( 'ERROR', 'woocommerce' ) . ': ' . __( 'Please enter last name.', 'woocommerce' ) );
+                }
+
+                if($key == 'billing_address_1' && $field == '')
+                {
+                    $woocommerce->add_error( '' . __( 'ERROR', 'woocommerce' ) . ': ' . __( 'Please enter address.', 'woocommerce' ) );
+                }
+
+                if($key == 'billing_city' && $field == '')
+                {
+                    $woocommerce->add_error( '' . __( 'ERROR', 'woocommerce' ) . ': ' . __( 'Please enter city.', 'woocommerce' ) );
+                }
+
+                if($key == 'billing_state' && $field == '')
+                {
+                    $woocommerce->add_error( '' . __( 'ERROR', 'woocommerce' ) . ': ' . __( 'Please enter state.', 'woocommerce' ) );
+                }
+
+                if($key == 'billing_postcode' && $field == '')
+                {
+                    $woocommerce->add_error( '' . __( 'ERROR', 'woocommerce' ) . ': ' . __( 'Please enter a postcode.', 'woocommerce' ) );
+                }
+
+                if($key == 'billing_email' && $field == '')
+                {
+                    $woocommerce->add_error( '' . __( 'ERROR', 'woocommerce' ) . ': ' . __( 'Please enter billing email address.', 'woocommerce' ) );
+                }
+
+                if($key == 'billing_phone' && $field == '')
+                {
+                    $woocommerce->add_error( '' . __( 'ERROR', 'woocommerce' ) . ': ' . __( 'Please enter phone number.', 'woocommerce' ) );
+                }
+            }
+
+        endforeach;
+    }
+   
+}
+```
+Add some CSS to `custom.css` to keep consistency with the rest of the form:
+```
+/* registration pg - billing address formatting */
+div.ms-extra-fields > p  {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+div.ms-extra-fields > p#billing_address_2_field {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+}
+
+/* registration pg */
+/* removes the 3 dots under asterisk for form required fields */
+form abbr[title] {
+    border-bottom: none !important;
+    text-decoration: none !important;
+}
+/* hide * from required fields */
+abbr.required {
+	display: none;
+}
+
+/* form alignment/color */
+.ms-form-element {
+	margin-left:0;
+	margin-right:0;
+}
+.ms-form-element .wpmui-field-label {
+	color: #5f727f;
+}
+.ms-form-element .wpmui-field-input {
+	margin: 0;
+}
+/* add max width for country select */
+select#billing_country {
+	max-width: 170px;
+}
+
+/* register page button */
+form#ms-shortcode-register-user-form button#register {
+	background-color: rgb(185, 118, 167);
+	border-radius: 3px;
+	color: #fff;
+	font-family: 'Montserrat', Arial, sans-serif;
+	padding: 8px 13px 8px 13px;
+	text-transform: uppercase;
+	margin-right:0;
+}
+
+div.ms-membership-form-wrapper a.wpmui-link {
+	background-color: transparent;
+	color: #00bcd4;
+	float: right;
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 25px;
+	margin: 0;
+	text-transform: none;
+	padding-right:0;
+}
+
+/* MOBILE - register page */
+@media only screen and (max-width: 425px) {
+	.ms-form-element .wpmui-field-label {
+		color: #5f727f; /* 12/2019 update */
+	}
+}
+```
+
+### Payment Page Aesthetics
+- **Problem**: We would like the payment page to look nicer.
+- **Solution**: Almost complete re-write of `membership_frontend_payment.php` in `plugins/membership-pro/app/view/templates`:
+
+Original
+```
+<?php/**
+* this file contains updates to the payment page 
+**/?>
+<div class="<?php echo get_ms_pm_membership_wrapper_class(); ?>">
+        <legend><?php _e( 'Join Membership', 'membership2' ) ?></legend>
+        <p class="ms-alert-box <?php echo get_ms_pm_alert_box_class(); ?>">
+                <?php echo get_ms_pm_message(); ?>
+        </p>
+        <table class="ms-purchase-table">
+                <tr>
+                        <td class="ms-title-column">
+                                
+                        </td>
+                        <td class="ms-details-column membership-column">
+                                You have selected the <br /><span class="membership-type"><?php echo get_ms_pm_membership_name();?></span><br /> membership!
+                        </td>
+                </tr>
+
+                <?php if ( is_ms_pm_membership_description() ) : ?>
+                        <tr>
+                                <td class="ms-title-column">
+                                        
+                                </td>
+                                <td class="ms-desc-column">
+                                        <span class="ms-membership-description"><?php
+                                                echo get_ms_pm_membership_description();
+                                        ?></span>
+                                </td>
+                        </tr>
+                <?php endif; ?>
+
+                <?php if ( ! is_ms_pm_membership_free() ) : ?>
+                        <?php if ( is_ms_pm_invoice_discount() || is_ms_pm_invoice_pro_rate() || is_ms_pm_invoice_tax_rate() ) : ?>
+                        <tr>
+                                <td class="ms-title-column">
+                                        
+                                </td>
+                                <td class="ms-details-column">
+                                        <?php
+                                        if ( get_ms_pm_membership_price() > 0 ) {
+                                                echo "Price per month: " . get_ms_pm_membership_formatted_price();
+                                        } else {
+                                                _e( 'Free', 'membership2' );
+                                        }
+                                        ?>
+                                </td>
+                        </tr>
+                        <?php endif; ?>
+
+                        <?php if ( is_ms_pm_invoice_discount() ) : ?>
+                                <tr>
+                                        <td class="ms-title-column">
+                                                
+                                        </td>
+                                        <td class="ms-price-column">
+                                                <?php echo "Coupon Discount: " . get_ms_pm_invoice_formatted_discount(); ?>
+                                        </td>
+                                </tr>
+                        <?php endif; ?>
+
+                        <?php if ( is_ms_pm_invoice_pro_rate() ) : ?>
+                                <tr>
+                                        <td class="ms-title-column">
+                                           
+                                        </td>
+                                        <td class="ms-price-column">
+                                                <?php echo 'Pro-Rate Discount: ' . get_ms_pm_invoice_formatted_pro_rate(); ?>
+                                        </td>
+                                </tr>
+                        <?php endif; ?>
+
+                        <?php if ( is_ms_pm_show_tax() ) : ?>
+                                <tr>
+                                        <td class="ms-title-column">
+                                                <?php echo get_ms_pm_invoice_tax_name(); ?>
+                                        </td>
+                                        <td class="ms-price-column">
+                                                <?php echo get_ms_pm_invoice_tax_name() . ': ' . get_ms_pm_invoice_formatted_tax(); ?>
+                                        </td>
+                                </tr>
+                        <?php endif; ?>
+
+                        <tr>
+                                <td class="ms-title-column">
+                                        
+                                </td>
+                                <td class="ms-price-column ms-total">
+                                        <?php
+                                        if ( get_ms_pm_invoice_total() > 0 ) {
+                                            if ( is_ms_admin_user() ) {
+                                                echo 'Total: ' . get_ms_pm_invoice_formatted_total_for_admin();
+                                            }else{
+                                                echo 'Total: ' .get_ms_pm_invoice_formatted_total();
+                                            }
+                                        } else {
+                                                _e( 'Free', 'membership2' );
+                                        }
+                                        ?>
+                                </td>
+                        </tr>
+
+                        <?php if ( is_ms_pm_trial() ) : ?>
+                                <tr>
+                                        <td class="ms-title-column">
+                                                
+                                        </td>
+                                        <td class="ms-desc-column"><?php
+                                                echo 'Payment due ' . get_ms_pm_invoice_formatted_due_date();
+                                        ?></td>
+                                </tr>
+                                <tr>
+                                        <td class="ms-title-column">
+                                            
+                                        </td>
+                                        <td class="ms-desc-column">
+                                        <?php
+                                        if ( get_ms_pm_invoice_trial_price() > 0 ) {
+                                                echo 'Trial price: ' . get_ms_pm_invoice_formatted_trial_price();
+                                        } else {
+                                                _e( 'Free', 'membership2' );
+                                        }
+                                        ?>
+                                        </td>
+                                </tr>
+                        <?php endif; ?>
+
+                        <?php
+                        do_action(
+                                'ms_view_frontend_payment_after_total_row',
+                                get_ms_payment_subscription(),
+                                get_ms_payment_invoice(),
+                                get_ms_payment_obj()
+                        );
+                        ?>
+
+                        <tr>
+                                <td class="ms-desc-column" colspan="2">
+                                        <span class="ms-membership-description"><?php
+                                                echo get_ms_pm_invoice_payment_description();
+                                        ?></span>
+                                </td>
+                        </tr>
+                <?php endif; ?>
+
+                <?php if ( is_ms_pm_cancel_warning() ) : ?>
+                        <tr>
+                                <td class="ms-desc-warning" colspan="2">
+                                        <span class="ms-cancel-other-memberships"><?php
+                                                echo get_ms_pm_cancel_warning();
+                                        ?></span>
+                                </td>
+                        </tr>
+                <?php endif;
+
+                if ( is_ms_admin_user() ) : ?>
+                        <tr>
+                                <td class="ms-desc-adminnote" colspan="2">
+                                        <em><?php
+                                        _e( 'As admin user you already have access to this membership', 'membership2' );
+                                        ?></em>
+                                </td>
+                        </tr>
+                <?php else :
+                        do_action(
+                                'ms_view_frontend_payment_purchase_button',
+                                get_ms_payment_subscription(),
+                                get_ms_payment_invoice(),
+                                get_ms_payment_obj()
+                        );
+                endif;
+                ?>
+        </table>
+</div>
+<?php
+do_action( 'ms_view_frontend_payment_after', get_ms_payment_obj_data(), get_ms_payment_obj() );
+do_action( 'ms_show_prices' );
+
+if ( is_ms_pm_show_tax() ) {
+        do_action( 'ms_tax_editor', get_ms_payment_invoice() );
+}
+?>
+<div style="clear:both;"></div>
+```
+
+New
+```
+<?php/**
+* this file contains updates to the payment page 
+**/?>
+<div class="<?php echo get_ms_pm_membership_wrapper_class(); ?>">
+  <legend style="text-align: center"><?php _e( 'Join Membership', 'membership2' ) ?></legend>
+  <div class="membership-payment-page">
+    <div style="border: 2px solid #3c3950;padding: 30px 90px;">
+      <div style="display: flex;flex-direction: column;justify-content: center;align-items: center; text-align: center;">
+        <p style="font-style: italic;margin-bottom: 20px;color: #3c3950;font-family: 'Montserrat UltraLight';
+          font-size: 18px;">You have selected the </p>
+        <div style="border: 1px #d4aeca solid; margin-bottom: 20px;width: 80%;"></div>
+        <div style="width: 160px;height: 160px;background-color: #d4aeca;border-radius: 100px;display: flex;align-items: center;justify-content: center;margin-bottom: 20px;">
+          <p style="margin:0;color: white; font-family: 'Montserrat';font-size: 25px;"><?php echo get_ms_pm_membership_name();?></p>
+        </div>
+        <div style="border: 1px #d4aeca solid; margin-bottom: 20px;width: 80%;"></div>
+        <p style="font-style: italic; margin:0;color: #3c3950;font-family: 'Montserrat UltraLight';font-size: 18px;">membership!</p>
+      </div>
+    </div>
+    <div style="display: flex;flex-direction: column;justify-content: center;">
+      <div style="display: flex;flex-direction: column;align-items: center;">
+        <div style="background-color: #d4aeca;color: white;padding: 0 10px 0 10px;font-family: 'Montserrat UltraLight';font-size: 25px;margin-bottom: 8px;text-align: start;">
+          Please complete your
+        </div>
+        <div style="background-color: #d4aeca;color: white;padding: 0 10px 0 10px;font-family: 'Montserrat UltraLight';font-size: 25px;margin-bottom: 40px;">
+          purchase below:
+        </div>
+        <?php if (is_ms_pm_membership_description()) : ?>
+          <div>
+            <?php echo get_ms_pm_membership_description();?>
+          </div>
+         <?php endif; ?>
+      </div>
+    <table class="ms-purchase-table" style="background-color: unset; width: 100%; margin:0;">
+      <?php if ( ! is_ms_pm_membership_free() ) : ?>
+          <?php if ( is_ms_pm_invoice_discount() || is_ms_pm_invoice_pro_rate() || is_ms_pm_invoice_tax_rate() ) : ?>
+              <tr>
+                <td class="ms-details-column">
+                  <?php if ( get_ms_pm_membership_price() > 0 ) {
+                    echo "Price per month: " . get_ms_pm_membership_formatted_price();
+                    } else {
+                      _e( 'Free', 'membership2' );
+                    }?></td>
+              </tr>
+      <?php endif; ?>
+      <?php if ( is_ms_pm_invoice_discount() ) : ?>
+        <tr>
+          <td class="ms-price-column">
+            <?php echo "Coupon Discount: " . get_ms_pm_invoice_formatted_discount(); ?>
+          </td>
+        </tr>
+      <?php endif; ?>
+      <?php if ( is_ms_pm_invoice_pro_rate() ) : ?>
+        <tr>
+            <td class="ms-price-column">
+              <?php echo 'Pro-Rate Discount: ' . get_ms_pm_invoice_formatted_pro_rate(); ?>
+            </td>
+        </tr>
+      <?php endif; ?>
+      <?php if ( is_ms_pm_show_tax() ) : ?>
+        <tr>
+          <td class="ms-title-column">
+            <?php echo get_ms_pm_invoice_tax_name(); ?>
+          </td>
+          <td class="ms-price-column">
+            <?php echo get_ms_pm_invoice_tax_name() . ': ' . get_ms_pm_invoice_formatted_tax(); ?>
+          </td>
+        </tr>
+      <?php endif; ?>
+      <?php if ( is_ms_pm_trial() ) : ?>
+        <tr>
+          <td class="ms-desc-column"><?php
+            echo 'Payment due ' . get_ms_pm_invoice_formatted_due_date();
+          ?></td>
+        </tr>
+        <tr>
+          <td class="ms-desc-column">
+            <?php
+              if ( get_ms_pm_invoice_trial_price() > 0 ) {
+                echo 'Trial price: ' . get_ms_pm_invoice_formatted_trial_price();
+              } else {
+                _e( 'Free', 'membership2' );
+              }?>
+          </td>
+        </tr>
+      <?php endif; ?>
+      <?php do_action('ms_view_frontend_payment_after_total_row', get_ms_payment_subscription(), get_ms_payment_invoice(), get_ms_payment_obj());?>
+        <tr>
+          <td class="ms-desc-column" colspan="2">
+             <span class="ms-membership-description"><?php echo get_ms_pm_invoice_payment_description();?></span>
+          </td>
+        </tr>
+      <?php endif; ?>
+      <?php if ( is_ms_pm_cancel_warning() ) : ?>
+        <tr>
+          <td class="ms-desc-warning" colspan="2">
+            <span class="ms-cancel-other-memberships"><?php echo get_ms_pm_cancel_warning();?></span>
+          </td>
+        </tr>
+      <?php endif;
+      if ( is_ms_admin_user() ) : ?>
+        <tr>
+          <td class="ms-desc-adminnote" colspan="2">
+            <em><?php _e( 'As admin user you already have access to this membership', 'membership2' );?></em>
+          </td>
+        </tr>
+      <?php else : do_action('ms_view_frontend_payment_purchase_button', get_ms_payment_subscription(), get_ms_payment_invoice(), get_ms_payment_obj());
+      endif;?>
+    </table>
+    </div>
+    </div>
+  </div>
+<?php do_action( 'ms_view_frontend_payment_after', get_ms_payment_obj_data(), get_ms_payment_obj() );
+do_action( 'ms_show_prices' );
+
+if ( is_ms_pm_show_tax() ) {
+  do_action( 'ms_tax_editor', get_ms_payment_invoice() );
+}
+?>
+<div style="clear:both;"></div>
+```
+Also added some CSS to `custom.css`:
+```
+/* membership payment page - update 12/2019*/
+.membership-payment-page {
+	display: flex;
+	justify-content: space-evenly;
+}
+
+/* membership page mobile */
+@media screen and (max-width: 980px) {
+	.membership-payment-page {
+		display: flex;
+		justify-content: space-evenly;
+		flex-direction: column;
+
+	}
+	.membership-payment-page > div {
+		margin-bottom: 40px;
+	}
+}
+
+```
 
 ## Code
 ### The Gem Child Theme
