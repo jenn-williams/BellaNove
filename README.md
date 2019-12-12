@@ -9,7 +9,8 @@
 	- [Hide Prices](#hide-prices)
 - [Design and CSS Changes](#design-and-css-changes)
 	- [Quickview](#quickview)
-	- [Cart Dropdown](#cart-dropdown)
+- [WP Configuration](#wp-configuration)
+- [Signup Confirmation Email](#signup-confirmation-email)
 
 
 ## Work from July 16 to November 7 2018.
@@ -712,7 +713,14 @@ div.variations_button {
 }
 ```
 
+## WP Configuration
+### Membership Upgrade Path
+- **Problem**: Not all membership upgrades were showing up as available to upgrade to (specifically Surprise Me-5 pieces)
+- **Solution**: This was a misconfiguration in WP backend. The “Surprise Me - 5 pieces” membership was not set to public. To fix it got to membership2 > memberships > edit for “Surprise Me - 5 pieces” > details > “This membership is public” set to yes. Now able to see all the correct memberships that are available.
 
+### Signup Confirmation Email
+- **Problem**: We want customers to receive a confirmation of their membership after they sign up
+- **Solution**: We can configure this in WP backend. Go to membership2 > settings > automated email responses, then activated email for “subscription - complete with payment".
 
 
 ## Code
