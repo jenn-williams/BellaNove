@@ -7,7 +7,7 @@
 	- [Purchase Page Aesthetics](#purchase-page-aesthetics)
 	- [Change Email Sender](#change-email-sender)
 	- [Hide Prices](#hide-prices)
-	- [Membership/Role Relationship](#membership-role-relationship)
+	- [Membership Role Relationship](#membership-role-relationship)
 	- [Profile Page Buttons](#profile-page-buttons)
 - [Design and CSS Changes](#design-and-css-changes)
 	- [Quickview](#quickview)
@@ -557,14 +557,16 @@ Also added some CSS to `custom.css`:
 
 ```
 
-Before:
-![Image](images/google_fonts.png)
+New Design
+
+![Image](images/purchase_page.png)
 
 ### Change Email Sender
 - **Problem**: We would like emails sent by WordPress to come from "BellaNove" instead of "Wordpress"
 - **Solution**: Add this code to `functions.php`:
 
 ```
+
 // Function to change email address
 function wpb_sender_email( $original_email_address ) {
     return 'hello@bellanove.com';
@@ -688,7 +690,7 @@ From `email-order-item.php`:
 
 [Reference](https://wordpress.org/support/topic/remove-price-woocommerce-new-order-template/)
 
-### Membership/Role Relationship(#membership-role-relationship)
+### Membership Role Relationship
 - **Problem**: When users upgraded/changed their membership to one of `Starter - 5`, `Surprise Me - 3`, or `Surprise Me - 5`, their role was not updated to the one corresponding to their membership (they retained the role of their previous membership).
 - **Solution**: These 3 new roles (and any subsequent new roles) need to be added to the `ms_controller_member_assign_memberships_done_cb` function in `functions.php`. It requires the new membership ID and the new role name. See the updated function below:
 
@@ -720,7 +722,7 @@ function ms_controller_member_assign_memberships_done_cb( $membership_id, $user_
 }
 ```
 
-### Profile Page Buttons(#profile-page-buttons)
+### Profile Page Buttons
 - **Problem**: We want buttons for "Shop" and "Cart" to appear at the bottom of this page.
 - **Solution**: This required editing the plugin file within buddy press (`plugins/buddypress/bp-templates/bp-legacy/buddypress/members/single/profile.php) plus CSS additions.
 
@@ -806,7 +808,7 @@ div.variations_button {
 - **Problem**: We want customers to receive a confirmation of their membership after they sign up
 - **Solution**: We can configure this in WP backend. Go to membership2 > settings > automated email responses, then activated email for “subscription - complete with payment".
 
-## Improving Page Load Speed(#improving-page-speed)
+## Improving Page Load Speed
 - I used the [GTMetrix](https://gtmetrix.com) site to test page speed and used these sites [Why is WordPress so Slow](https://onlinemediamasters.com/why-is-wordpress-so-slow/) and [GTMetrix - WordPress Optimization Guide](https://gtmetrix.com/wordpress-optimization-guide.html) as helpful guides to interpret the results of the GTMetrix report and make the corresponding fixes.
 - Before updating the main site, I created a subdomain (test.bellanove.com) created from a backup of the main site to test out the updates/optimizations to ensure nothing breaks the site.
 
