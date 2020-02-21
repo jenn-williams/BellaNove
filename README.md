@@ -7,10 +7,14 @@
 	- [Purchase Page Aesthetics](#purchase-page-aesthetics)
 	- [Change Email Sender](#change-email-sender)
 	- [Hide Prices](#hide-prices)
+	- [Membership/Role Relationship](#membership-role-relationship)
+	- [Profile Page Buttons](#profile-page-buttons)
 - [Design and CSS Changes](#design-and-css-changes)
 	- [Quickview](#quickview)
 - [WP Configuration](#wp-configuration)
-- [Signup Confirmation Email](#signup-confirmation-email)
+	- [Membership Upgrade Options](#membership-upgrade-path)
+	- [Signup Confirmation Email](#signup-confirmation-email)
+- [Improving Page Load Speed](#improving-page-speed)
 
 
 ## Work from July 16 to November 7 2018.
@@ -194,6 +198,12 @@ div.ms-extra-fields > p#billing_address_2_field {
 	justify-content: flex-end;
 }
 
+div.ms-extra-fields > h3 {
+	color: #000;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 2em;
+}
+
 /* registration pg */
 /* removes the 3 dots under asterisk for form required fields */
 form abbr[title] {
@@ -252,11 +262,11 @@ div.ms-membership-form-wrapper a.wpmui-link {
 }
 ```
 
-### Payment Page Aesthetics
+### Purchase Page Aesthetics
 - **Problem**: We would like the payment page to look nicer.
 - **Solution**: Almost complete re-write of `membership_frontend_payment.php` in `plugins/membership-pro/app/view/templates`:
 
-Original
+Original Code
 
 ```
 <?php/**
@@ -547,6 +557,9 @@ Also added some CSS to `custom.css`:
 
 ```
 
+Before:
+![Image](images/google_fonts.png)
+
 ### Change Email Sender
 - **Problem**: We would like emails sent by WordPress to come from "BellaNove" instead of "Wordpress"
 - **Solution**: Add this code to `functions.php`:
@@ -675,6 +688,77 @@ From `email-order-item.php`:
 
 [Reference](https://wordpress.org/support/topic/remove-price-woocommerce-new-order-template/)
 
+### Membership/Role Relationship(#membership-role-relationship)
+- **Problem**: When users upgraded/changed their membership to one of `Starter - 5`, `Surprise Me - 3`, or `Surprise Me - 5`, their role was not updated to the one corresponding to their membership (they retained the role of their previous membership).
+- **Solution**: These 3 new roles (and any subsequent new roles) need to be added to the `ms_controller_member_assign_memberships_done_cb` function in `functions.php`. It requires the new membership ID and the new role name. See the updated function below:
+
+```
+function ms_controller_member_assign_memberships_done_cb( $membership_id, $user_id, $gateway_id, $move_from_id ) {
+	$user = new WP_User( $user_id );
+	switch( $membership_id ){
+		case 3702:
+			$user->set_role( 'starter_closet' );
+			break;
+		
+		case 3722:
+			$user->set_role( 'enhanced_closet' );
+			break;
+		
+		case 3723:
+			$user->set_role( 'ultimate_closet' );
+			break;
+        case 30959:
+            $user->set_role( 'surprise3' );
+            break;
+        case 30961:
+            $user->set_role( 'surprise-5' );
+            break;
+        case 31032:
+            $user->set_role( 'starter5' );
+            break;
+	}
+}
+```
+
+### Profile Page Buttons(#profile-page-buttons)
+- **Problem**: We want buttons for "Shop" and "Cart" to appear at the bottom of this page.
+- **Solution**: This required editing the plugin file within buddy press (`plugins/buddypress/bp-templates/bp-legacy/buddypress/members/single/profile.php) plus CSS additions.
+
+Added these lines to `line 66` of `profile.php`:
+
+```
+<div class="profile-button-group">
+	<a class="profile-button" href="https://www.bellanove.com/browse-closet/" class="button">Shop</a>
+	<a class="profile-button" href="https://www.bellanove.com/cart/" class="button">Cart</a>
+</div>
+```
+
+Added this to `custom.css`:
+
+```
+#buddypress .standard-form div.submit {
+	padding: 0;
+}
+
+#buddypress .standard-form div.submit input {
+	margin-bottom: 0;
+}
+
+div.profile-button-group {
+	display: flex;
+    justify-content: space-evenly;
+    margin-top: 30px;
+}
+
+a.profile-button {
+	background-color: rgb(185, 118, 167);
+    border-radius: 3px;
+    color: #fff;
+    font-family: 'Montserrat', Arial, sans-serif;
+    padding: 8px 13px 8px 13px;
+    text-transform: uppercase;
+}
+```
 
 ## Design & CSS Changes
 ### Quickview
@@ -722,6 +806,73 @@ div.variations_button {
 - **Problem**: We want customers to receive a confirmation of their membership after they sign up
 - **Solution**: We can configure this in WP backend. Go to membership2 > settings > automated email responses, then activated email for “subscription - complete with payment".
 
+## Improving Page Load Speed(#improving-page-speed)
+- I used the [GTMetrix](https://gtmetrix.com) site to test page speed and used these sites [Why is WordPress so Slow](https://onlinemediamasters.com/why-is-wordpress-so-slow/) and [GTMetrix - WordPress Optimization Guide](https://gtmetrix.com/wordpress-optimization-guide.html) as helpful guides to interpret the results of the GTMetrix report and make the corresponding fixes.
+- Before updating the main site, I created a subdomain (test.bellanove.com) created from a backup of the main site to test out the updates/optimizations to ensure nothing breaks the site.
+
+### Delete all inactive and unused plugins
+- This reduces page size and requests
+
+### Delete all inactive and unused plugins
+- This reduces page size and requests
+
+### Remove unused JavaScript snippets
+- This actually improved PageSpeed score by a whole 1%
+- We are no longer using Friendbuy, so I removed this code snippet from `header.php`:
+
+```
+<script>
+    window['friendbuy'] = window['friendbuy'] || [];
+    window['friendbuy'].push(['site', 'site-a667e411-www.bellanove.com']);
+    window['friendbuy'].push(['track', 'customer',
+        {
+            id: '', //INPUT ORDER ID
+			amount: '', //INPUT ORDER AMOUNT
+			coupon_code: '', //OPTIONAL, coupon code if used for order
+             new_customer: '', //OPTIONAL, true if this is the customer's first purchase
+ 			email: '' //INPUT EMAIL
+        }
+    ]);
+    (function (f, r, n, d, b, y) {
+        b = f.createElement(r), y = f.getElementsByTagName(r)[0];b.async = 1;b.src = n;y.parentNode.insertBefore(b, y);
+    })(document, 'script', '//djnf6e5yyirys.cloudfront.net/js/friendbuy.min.js');
+  </script>
+```
+
+### Updated all plugins + WP version
+- Updates typically include performance improvements
+- The only one I didn't update was `Yith Woocommerce Wishlist` because I noticed some issues with it when I tried the update on the test site
+
+### Use caching
+- Add `WP Fastest Cache` Plugin
+- Deactivated other cache plugins (`Autoptimize` and `HummingbirdPro`) first, then applied these settings:
+(add image)
+![Image](images/wp_fastest_cache.png)
+
+### Compress Images
+- Looked at GTMetrix to see which images need to be compressed (you can click the link to see the image)
+- Add `WP-Optimize` plugin
+- Within the plugin go to "Images" section, select the images that need to be compressed and under "Compression options" chose "Prioritize retention of detail" (this is lossless compression)
+
+### Host Google Fonts Locally
+- This is part of the "Add Expires Headers" recommendation
+- Added `Self-Hosted Google Fonts`, within the plugin apply these settings:
+
+![Image](images/google_fonts.png)
+
+### Add Expires Headers
+- Add the following to the `.htaccess` file (in the `public_html` folder):
+```
+ExpiresByType text/css "access plus 60 days"
+ExpiresByType text/javascript "access plus 60 days"
+ExpiresByType image/ico "access plus 60 days"
+ExpiresByType image/jpg "access plus 60 days"
+ExpiresByType image/jpeg "access plus 60 days"
+ExpiresByType image/gif "access plus 60 days"
+ExpiresByType image/png "access plus 60 days"
+ExpiresByType text/css "access plus 60 days"
+ExpiresByType text/html "access plus 60 days"
+```
 
 ## Code
 ### The Gem Child Theme
